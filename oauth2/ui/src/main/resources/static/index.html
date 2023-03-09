@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Spring self-education project</title>
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+<script type="text/javascript">
+    $.ajaxSetup({
+	    beforeSend : function(xhr, settings) {
+	      //console.log('before send, ' + settings.type);
+	      if (settings.type == 'POST' || settings.type == 'PUT' || settings.type == 'DELETE') {
+	        <!--if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {-->
+	          // Only send the token to relative URLs i.e. locally.
+	          //console.log( 'XSRF-TOKEN ' + Cookies.get('XSRF-TOKEN'));
+	          xhr.setRequestHeader("X-XSRF-TOKEN", Cookies.get('XSRF-TOKEN'));
+	        <!--}-->
+	      }
+	      return true;
+	    }
+	  });
+    function logoutCustom() {
+    	$.post("/logout", function(data) {
+    		location.reload();
+    		return true;
+    	})
+    };
+	function onLoad() {
+		$.get("/user", function(data) {
+			console.log(data);
+			role = data.role
+		    $("#user").html(data.name);		    
+		    auth = false;
+		    if( data != '') {
+		    	auth = true;
+		    }
+			$(".unauthenticated").toggle(!auth);
+			$(".authenticated").toggle(auth);
+			$(".user").toggle(data.role.includes('ROLE_USER'));
+			$(".admin").toggle(data.role.includes('ROLE_ADMIN'));
+			return true;
+		});
+	};
+    
+    function getToken() {
+        $.ajax({
+        	async: false,
+            url: "http://localhost:8091/token",
+            type: 'POST',
+            success: function(res) {
+                token = "Bearer ".concat(res);
+            },
+            error: function (request, textStatus, errorThrown) {
+            	token = "";
+                console.log(request.responseText);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    };
+	function getInstance() {
+		getToken();
+		$.ajax({
+		       url: "http://localhost:8090/getInstanceId",
+		       type: 'GET',
+		       beforeSend: function(xhr){
+		    	   xhr.setRequestHeader("Authorization", token);
+	    	   },
+		       success: function(res) {
+		           $("#resourceId").html(res);
+		       },
+		       error: function (request, textStatus, errorThrown) {
+		           console.log(request.responseText);
+		           console.log(textStatus);
+		           console.log(errorThrown);
+		       }
+		   });
+		return true;
+	}
+    function getStatistic() {
+        getToken();
+        $.ajax({
+               url: "http://localhost:8090/getStatistic",
+               type: 'GET',
+               beforeSend: function(xhr){
+                   xhr.setRequestHeader("Authorization", token);
+               },
+               success: function(res) {
+                   $("#statistic").html(res);
+               },
+               error: function (request, textStatus, errorThrown) {
+                   console.log(request.responseText);
+                   console.log(textStatus);
+                   console.log(errorThrown);
+               }
+           });
+        return true;
+    }
+</script>
+</head>
+<body onload="onLoad();">
+	<div class="container unauthenticated">
+		<a href="/login">Login</a>
+	</div>
+    <div class="container authenticated" style="display: none">
+        <a href="javascript:logoutCustom();">Logout</a>
+    </div>
+	<div class="container authenticated" style="display: none">
+		Welcome <span id="user"></span>
+	</div>
+    <div class="container user" style="display: none">
+        <a href="javascript:getInstance();">Resource ID:</a>&nbsp;<span id="resourceId"></span>
+    </div>
+    <div class="container user admin" style="display: none">
+        <a href="javascript:getStatistic();">Statistic:</a>&nbsp;<span id="statistic"></span>
+    </div>
+</body>
+</html>

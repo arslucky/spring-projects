@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: authorization-server
+server:
+  port: 9000
+  context-path: /uaa
+security:
+  user:
+    password: none
+  oauth2:
+    resource:
+      user-info-uri: http://localhost:9000/uaa/user
+logging:
+  pattern:
+    console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
+  level:
+    org.springframework.security: INFO
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
+management:
+  health:
+    defaults:
+      enabled: true                
+        

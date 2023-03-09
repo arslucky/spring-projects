@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: resource
+server:
+  port: ${resource.port:8090}
+logging:
+  pattern:
+    console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
+  level:
+    org.springframework: INFO
+    #org.springframework.security: DEBUG     
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: false 
+  instance:
+    instance-id: ${spring.application.name}:${random.int}
+#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
+management:
+  health:
+    defaults:
+      enabled: true                
+#management:
+  #endpoints:
+#    web:
+#      exposure:
+#        include:
+#        - health
+#        - info
+#        - shutdown
+  #endpoint:
+#    health:
+#      show-details: always
+#    shutdown:
+#      enabled: true
+security:
+  user:
+    password: none
+  oauth2:
+#    sso:
+#      loginPath: http://localhost:9000/uaa/login
+#      filter-order: 1001
+    resource:
+      user-info-uri: http://localhost:9000/uaa/user
+#      userInfoUri: http://localhost:9000/uaa/user
+#    client:
+#      accessTokenUri: http://localhost:9000/uaa/oauth/token
+#      access-token-uri: http://localhost:9000/uaa/oauth/token
+#      userAuthorizationUri: http://localhost:9000/uaa/oauth/authorize
+#      user-authorization-uri: http://localhost:9000/uaa/oauth/authorize
+#      authentication-scheme: form
+#      id: resource_client
+#      client-secret: password
+#    authorization:
+#      check-token-access: isAuthenticated()
