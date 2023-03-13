@@ -18,7 +18,7 @@ eureka:
     healthcheck:
       enabled: true
   instance:
-    instance-id: ${spring.application.name}:${random.value}
+    instance-id: ${spring.application.name}:${random.int}
 #    instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
