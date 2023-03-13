@@ -68,7 +68,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                     .resourceIds( "oauth2-resource")
 //                    .accessTokenValiditySeconds( 30)
                     .autoApprove( true)
-                    .redirectUris( "http://localhost:8091/login")
+                    .redirectUris( "http://localhost:8080/login")
                 .and()
                     .withClient( "trust_client")
                     .secret( "password")

@@ -6,34 +6,44 @@
 <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
 <script type="text/javascript">
-    $.ajaxSetup({
-	    beforeSend : function(xhr, settings) {
-	      //console.log('before send, ' + settings.type);
-	      if (settings.type == 'POST' || settings.type == 'PUT' || settings.type == 'DELETE') {
-	        <!--if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {-->
-	          // Only send the token to relative URLs i.e. locally.
-	          //console.log( 'XSRF-TOKEN ' + Cookies.get('XSRF-TOKEN'));
-	          xhr.setRequestHeader("X-XSRF-TOKEN", Cookies.get('XSRF-TOKEN'));
-	        <!--}-->
-	      }
-	      return true;
-	    }
-	  });
-    function logoutCustom() {
-    	$.post("/logout", function(data) {
-    		location.reload();
-    		return true;
-    	})
-    };
+	function authorization(xhr, settings) {
+		//console.log('before send, ' + settings.type + ', ' + settings.url);
+		if (!(/^\/token.*/.test(settings.url))) {
+			getToken();
+			//console.log('token=' + token);
+			xhr.setRequestHeader("Authorization", token);
+		}
+		if (settings.type == 'POST' || settings.type == 'PUT'
+				|| settings.type == 'DELETE') {
+			var csrfToken = Cookies.get('XSRF-TOKEN');
+			if (csrfToken != '') {
+				xhr.setRequestHeader("X-XSRF-TOKEN", csrfToken);
+			}
+		}
+	};
+	function logoutCustom() {
+		$.ajax({
+			url : "/logout",
+			type : "POST",
+			beforeSend : function(xhr, settings) {
+				authorization(xhr, settings)
+			},
+			success : function(data) {
+				location.reload();
+			},
+			error : function(data) {
+				location.reload();
+			}
+		});
+	};
 	function onLoad() {
 		$.get("/user", function(data) {
-			console.log(data);
 			role = data.role
-		    $("#user").html(data.name);		    
-		    auth = false;
-		    if( data != '') {
-		    	auth = true;
-		    }
+			$("#user").html(data.name);
+			auth = false;
+			if (data != '') {
+				auth = true;
+			}
 			$(".unauthenticated").toggle(!auth);
 			$(".authenticated").toggle(auth);
 			$(".user").toggle(data.role.includes('ROLE_USER'));
@@ -41,78 +51,108 @@
 			return true;
 		});
 	};
-    
-    function getToken() {
-        $.ajax({
-        	async: false,
-            url: "http://localhost:8091/token",
-            type: 'POST',
-            success: function(res) {
-                token = "Bearer ".concat(res);
-            },
-            error: function (request, textStatus, errorThrown) {
-            	token = "";
-                console.log(request.responseText);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
-        });
-    };
-	function getInstance() {
+
+	function getToken() {
+		$.ajax({
+			async : false,
+			url : "/token",
+			type : 'POST',
+			beforeSend : function(xhr, settings) {
+				authorization(xhr, settings)
+			},
+			success : function(res) {
+				token = "Bearer ".concat(res);
+			},
+			error : function(request, textStatus, errorThrown) {
+				console.log(request.responseText);
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+		});
+	};
+	function getInstanceId(requestUrl, requestType, objectId) {
 		getToken();
 		$.ajax({
-		       url: "http://localhost:8090/getInstanceId",
-		       type: 'GET',
-		       beforeSend: function(xhr){
-		    	   xhr.setRequestHeader("Authorization", token);
-	    	   },
-		       success: function(res) {
-		           $("#resourceId").html(res);
-		       },
-		       error: function (request, textStatus, errorThrown) {
-		           console.log(request.responseText);
-		           console.log(textStatus);
-		           console.log(errorThrown);
-		       }
-		   });
-		return true;
+			url : requestUrl,
+			type : requestType,
+			beforeSend : function(xhr, settings) {
+				authorization(xhr, settings)
+			},
+			success : function(res) {
+				$(objectId).html(res);
+			},
+			error : function(request, textStatus, errorThrown) {
+				$(objectId).html(request.responseText);
+				console.log(request.responseText);
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+		});
+	};
+	function getStatistic() {
+		$.ajax({
+			url : "/resource/getStatistic",
+			type : 'POST',
+			beforeSend : function(xhr, settings) {
+				authorization(xhr, settings)
+			},
+			success : function(res) {
+				$("#statistic").html(res);
+			},
+			error : function(request, textStatus, errorThrown) {
+				console.log(request.responseText);
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+		});
+	};
+	function getDate() {
+		$.ajax({
+			url : "/ui/getDate",
+			type : 'POST',
+			beforeSend : function(xhr, settings) {
+				authorization(xhr, settings)
+			},
+			success : function(res) {
+				$("#date").html(res);
+			},
+			error : function(request, textStatus, errorThrown) {
+				console.log(request.responseText);
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+		});
 	}
-    function getStatistic() {
-        getToken();
-        $.ajax({
-               url: "http://localhost:8090/getStatistic",
-               type: 'GET',
-               beforeSend: function(xhr){
-                   xhr.setRequestHeader("Authorization", token);
-               },
-               success: function(res) {
-                   $("#statistic").html(res);
-               },
-               error: function (request, textStatus, errorThrown) {
-                   console.log(request.responseText);
-                   console.log(textStatus);
-                   console.log(errorThrown);
-               }
-           });
-        return true;
-    }
 </script>
 </head>
 <body onload="onLoad();">
-	<div class="container unauthenticated">
-		<a href="/login">Login</a>
-	</div>
-    <div class="container authenticated" style="display: none">
-        <a href="javascript:logoutCustom();">Logout</a>
-    </div>
-	<div class="container authenticated" style="display: none">
-		Welcome <span id="user"></span>
-	</div>
-    <div class="container user" style="display: none">
-        <a href="javascript:getInstance();">Resource ID:</a>&nbsp;<span id="resourceId"></span>
-    </div>
-    <div class="container user admin" style="display: none">
-        <a href="javascript:getStatistic();">Statistic:</a>&nbsp;<span id="statistic"></span>
-    </div>
+  <div class="container unauthenticated">
+    <a href="/login">Login</a>
+  </div>
+  <div class="container authenticated" style="display: none">
+    <a href="javascript:logoutCustom();">Logout</a>
+  </div>
+  <div class="container authenticated" style="display: none">
+    Welcome <span id="user"></span>
+  </div>
+  <br>
+  <table>
+    <tr class="container user" style="display: none">
+      <td><a href="javascript:getInstanceId('/ui/getInstanceId', 'GET', '#uiId');">UI ID:</a></td>
+      <td><span id="uiId"></span></td>
+    </tr>
+    <tr class="container user" style="display: none">
+      <td><a href="javascript:getInstanceId('/resource/getInstanceId', 'GET', '#resourceId');">Resource ID:</a></td>
+      <td><span id="resourceId"></span></td>
+    </tr>
+    <tr class="container user" style="display: none">
+      <td><a href="javascript:getDate();">Date:</a></td>
+      <td><span id="date"></span></td>
+    </tr>
+    <tr class="container user admin" style="display: none">
+      <td><a href="javascript:getStatistic();">Statistic:</a></td>
+      <td><span id="statistic"></span></td>
+    </tr>
+  </table>
 </body>
 </html>

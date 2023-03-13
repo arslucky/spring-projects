@@ -1,4 +1,4 @@
-package org.demo.ars.ui.config;
+package org.demo.ars.resource.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +12,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  *
  */
 @Configuration
+// @EnableOAuth2Sso
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     Logger log = LoggerFactory.getLogger( getClass());
@@ -21,9 +22,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // @formatter:off
         http.httpBasic().disable()
-        .csrf()
-            .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
-        ;
+            .csrf()
+                .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
+            ;
         // @formatter:on
     }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 /**
  * @author arsen.ibragimov
@@ -54,7 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .formLogin().permitAll()
             .and()
-                .csrf().disable()
+                .csrf()
+                .csrfTokenRepository( new HttpSessionCsrfTokenRepository())
+//                .cors().disable()
             ;
         // @formatter:on
     }

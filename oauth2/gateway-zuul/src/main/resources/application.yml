@@ -1,0 +1,78 @@
+server:
+  port: ${gateway-zuul.port:8080}
+spring:
+  application:
+    name: gateway-zuul
+logging:
+  pattern:
+    console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
+  level:
+    org:
+      springframework: INFO     
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include:
+#        - health
+#        - info
+#  endpoint:
+#    health:
+#      show-details: always
+#proxy:
+#  auth:
+#    routes:
+#      ui: oauth2
+#      webjars: passthru
+zuul:
+  routes:
+    root:
+      path: /
+      service-id: ui
+    webjars:
+      path: /webjars/**
+      service-id: ui
+      strip-prefix: false
+    ui:
+      path: /ui/**
+      service-id: ui
+      sensitiveHeaders:
+    resource:
+      path: /resource/**
+      service-id: resource
+      sensitiveHeaders:
+security:
+#  sessions: stateless
+  user:
+    password: none
+  basic:
+    enabled: false
+  oauth2:
+    sso:
+      login-path: /login
+    resource:
+      user-info-uri: http://localhost:9000/uaa/user
+      id: oauth2-resource
+    client: 
+      access-token-uri: http://localhost:9000/uaa/oauth/token
+      user-authorization-uri: http://localhost:9000/uaa/oauth/authorize
+      client-id: ui_client
+      client-secret: password
+      scope:
+      - read
+      - write
+management:
+  health:
+    defaults:
+      enabled: true      

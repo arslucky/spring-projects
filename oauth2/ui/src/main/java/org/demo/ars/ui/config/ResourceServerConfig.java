@@ -1,4 +1,4 @@
-package org.demo.ars.resource.config;
+package org.demo.ars.ui.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,14 +18,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure( HttpSecurity http) throws Exception {
         // @formatter:off
         http
-            .antMatcher( "/**")
-            .authorizeRequests()
+            .authorizeRequests().anyRequest().permitAll()
                 .antMatchers( HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers( "/webjars/**").permitAll()
                 .antMatchers( "/getInstanceId").hasAnyRole( "USER", "ADMIN")
                 .antMatchers( "/getStatistic").hasAnyRole( "ADMIN")
                 .anyRequest().authenticated()
                 //access( "#oauth2.hasScope('read')")
-            ;
+                ;
         // @formatter:on
     }
 

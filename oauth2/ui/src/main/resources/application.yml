@@ -2,24 +2,29 @@ spring:
   application:
     name: ui
 server:
-  port: ${ui.port:8091}
+  port: ${ui.port:0}
 logging:
   pattern:
     console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
   level:
     org:
       springframework: INFO   
-#eureka:
-#  client:
-#    register-with-eureka: true
-#    fetch-registry: true
-#    service-url:
-#      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
-#    healthcheck:
-#      enabled: true
-#  instance:
-#    instance-id: ${spring.application.name}:${random.value}
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+#    instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
+management:
+  health:
+    defaults:
+      enabled: true
 #management:
 #  endpoints:
 #    web:
@@ -37,18 +42,5 @@ security:
   basic:
     enabled: false
   oauth2:
-    sso:
-      login-path: /login 
     resource:
       user-info-uri: http://localhost:9000/uaa/user
-      id: oauth2-resource
-    client:
-      access-token-uri: http://localhost:9000/uaa/oauth/token
-      user-authorization-uri: http://localhost:9000/uaa/oauth/authorize
-      client-id: ui_client
-      client-secret: password
-      scope:
-      - read
-      - write
-#    authorization:
-#      check-token-access: isAuthenticated()

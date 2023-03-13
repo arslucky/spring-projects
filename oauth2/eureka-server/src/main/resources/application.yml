@@ -1,0 +1,32 @@
+server:
+  port: ${eureka.server.port:8761}
+spring:
+  application:
+    name: eureka-server
+logging:
+  pattern:
+    console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}    
+eureka:
+  instance:
+    hostname: localhost
+#    lease-expiration-duration-in-seconds: ${eureka.heartbeat.waiting.interval:1}
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    enable-self-preservation: false
+#    expected-client-renewal-interval-seconds: ${eureka.heartbeat.sending.interval:1}
+#    eviction-interval-timer-in-ms: ${eureka.eviction.job.running.ms:5000}
+#    renewal-percent-threshold: ${eureka.heartbeat.expected:0.49}
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+  endpoint:
+    health:
+      show-details: always    

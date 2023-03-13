@@ -2,7 +2,7 @@ spring:
   application:
     name: resource
 server:
-  port: ${resource.port:8090}
+  port: ${resource.port:0}
 logging:
   pattern:
     console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
@@ -19,6 +19,7 @@ eureka:
       enabled: false 
   instance:
     instance-id: ${spring.application.name}:${random.int}
+#     instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
   health:

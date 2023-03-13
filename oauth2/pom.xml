@@ -10,5 +10,7 @@
   	<module>resource</module>
   	<module>ui</module>
     <module>authorization-server</module>
+    <module>eureka-server</module>
+    <module>gateway-zuul</module>
   </modules>
 </project>
