@@ -1,11 +1,11 @@
 server:
-  port: ${gateway-zuul.port:8080}
+  port: ${port}
 spring:
   application:
     name: gateway-zuul
 logging:
   pattern:
-    console: ${log.pattern:%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n}
+    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
   level:
     org:
       springframework: INFO     
@@ -14,10 +14,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${eureka.server.uri:http://localhost:8761/eureka}
+      defaultZone: http://${eureka_host}:${eureka_port}/eureka
     healthcheck:
       enabled: true
   instance:
+#    hostname: ${eureka_instance_hostname}
     instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 #management:
@@ -62,11 +63,14 @@ security:
     sso:
       login-path: /login
     resource:
-      user-info-uri: http://localhost:9000/uaa/user
+      user-info-uri: http://${auth_host}:${auth_port}/uaa/user
+#      user-info-uri: http://localhost:${port}/uaa/user      
       id: oauth2-resource
     client: 
-      access-token-uri: http://localhost:9000/uaa/oauth/token
-      user-authorization-uri: http://localhost:9000/uaa/oauth/authorize
+      access-token-uri: http://${auth_host}:${auth_port}/uaa/oauth/token
+#      access-token-uri: http://localhost:${port}/uaa/oauth/token
+      user-authorization-uri: http://${auth_host_authorization}:${auth_port}/uaa/oauth/authorize
+#      user-authorization-uri: http://localhost:${port}/uaa/oauth/authorize
       client-id: ui_client
       client-secret: password
       scope:
@@ -75,4 +79,4 @@ security:
 management:
   health:
     defaults:
-      enabled: true      
+      enabled: true
