@@ -14,13 +14,12 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka_host}:${eureka_port}/eureka
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka
     healthcheck:
       enabled: true
   instance:
-    hostname: ${eureka_instance_hostname}
+    hostname: ${eureka.instance.hostname}
     instance-id: ${spring.application.name}:${random.int}
-#    instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
   health:
@@ -44,4 +43,4 @@ security:
     enabled: false
   oauth2:
     resource:
-      user-info-uri: http://${auth_host}:${auth_port}/uaa/user
+      user-info-uri: http://${auth.host}:${auth.port}/uaa/user

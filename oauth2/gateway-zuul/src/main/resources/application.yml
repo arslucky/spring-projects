@@ -14,7 +14,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka_host}:${eureka_port}/eureka
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka
     healthcheck:
       enabled: true
   instance:
@@ -63,14 +63,11 @@ security:
     sso:
       login-path: /login
     resource:
-      user-info-uri: http://${auth_host}:${auth_port}/uaa/user
-#      user-info-uri: http://localhost:${port}/uaa/user      
+      user-info-uri: http://${auth.host}:${auth.port}/uaa/user
       id: oauth2-resource
     client: 
-      access-token-uri: http://${auth_host}:${auth_port}/uaa/oauth/token
-#      access-token-uri: http://localhost:${port}/uaa/oauth/token
-      user-authorization-uri: http://${auth_host_authorization}:${auth_port}/uaa/oauth/authorize
-#      user-authorization-uri: http://localhost:${port}/uaa/oauth/authorize
+      access-token-uri: http://${auth.host}:${auth.port}/uaa/oauth/token
+      user-authorization-uri: http://${auth.host.authorization}:${auth.port}/uaa/oauth/authorize
       client-id: ui_client
       client-secret: password
       scope:

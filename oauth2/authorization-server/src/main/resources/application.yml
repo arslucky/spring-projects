@@ -9,26 +9,13 @@ security:
     password: none
   oauth2:
     resource:
-      user-info-uri: http://${auth_host}:${server.port}/uaa/user
+      user-info-uri: http://${host}:${server.port}/uaa/user
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
   level:
     org.springframework.security: INFO
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${eureka_host}:${eureka_port}/eureka
-    healthcheck:
-      enabled: true
-  instance:
-    hostname: ${auth_host}
-    instance-id: ${spring.application.name}:${server.port}
-#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
   health:
     defaults:
-      enabled: true                
-        
+      enabled: true        

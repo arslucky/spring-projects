@@ -8,19 +8,17 @@ logging:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
   level:
     org.springframework: INFO
-    #org.springframework.security: DEBUG     
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka_host}:${eureka_port}/eureka
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka
     healthcheck:
       enabled: false 
   instance:
-    hostname: ${eureka_instance_hostname}
+    hostname: ${eureka.instance.hostname}
     instance-id: ${spring.application.name}:${random.int}
-#     instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
   health:
@@ -44,4 +42,4 @@ security:
     password: none
   oauth2:
     resource:
-      user-info-uri: http://${auth_host}:${auth_port}/uaa/user
+      user-info-uri: http://${auth.host}:${auth.port}/uaa/user

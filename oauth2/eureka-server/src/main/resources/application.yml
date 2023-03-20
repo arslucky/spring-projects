@@ -14,7 +14,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://${eureka_instance_hostname}:${server.port}/eureka/
+      defaultZone: http://${host}:${server.port}/eureka/
   server:
     enable-self-preservation: false
 #    expected-client-renewal-interval-seconds: ${eureka.heartbeat.sending.interval:1}
