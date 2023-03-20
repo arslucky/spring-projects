@@ -12,7 +12,6 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
  *
  */
 @Configuration
-// @EnableOAuth2Sso
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     Logger log = LoggerFactory.getLogger( getClass());
@@ -21,7 +20,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure( HttpSecurity http) throws Exception {
 
         // @formatter:off
-        http.httpBasic().disable()
+        http
+            .antMatcher( "/")
+            .authorizeRequests()
+                .antMatchers( "/").permitAll()
+            .and()
+            .httpBasic().disable()
             .csrf()
                 .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
             ;

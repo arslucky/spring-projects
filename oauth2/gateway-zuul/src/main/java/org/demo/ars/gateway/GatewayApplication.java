@@ -34,7 +34,7 @@ public class GatewayApplication {
 		SpringApplication.run(GatewayApplication.class, args);
 	}
 
-    @RequestMapping( "/user")
+    @RequestMapping( path = "/user", method = { RequestMethod.POST })
     public Map<String, String> user( Principal user) {
         if( user != null) {
             Map<String, String> details = new HashMap<>( 2);

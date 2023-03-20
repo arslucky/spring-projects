@@ -20,9 +20,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure( HttpSecurity http) throws Exception {
 
         // @formatter:off
-        http.httpBasic().disable()
-        .csrf()
-            .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
+        http
+            .antMatcher( "/")
+            .authorizeRequests()
+                .antMatchers( "/").permitAll()
+            .and()
+            .httpBasic().disable()
+            .csrf()
+                .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
         ;
         // @formatter:on
     }

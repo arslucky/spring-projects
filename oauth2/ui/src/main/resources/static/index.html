@@ -8,7 +8,7 @@
 <script type="text/javascript">
     function authorization(xhr, settings) {
         //console.log('before send, ' + settings.type + ', ' + settings.url);
-        if (!(/^\/token.*/.test(settings.url))) {
+        if (!(/^\/token/.test(settings.url) || /^\/user/.test(settings.url))) {
             getToken();
             //console.log('token=' + token);
             xhr.setRequestHeader("Authorization", token);
@@ -37,18 +37,29 @@
         });
     };
     function onLoad() {
-        $.get("/user", function(data) {
-            role = data.role
-            $("#user").html(data.name);
-            auth = false;
-            if (data != '') {
-                auth = true;
+        $.ajax({
+            url : "/user",
+            type : 'POST',
+            beforeSend : function(xhr, settings) {
+                authorization(xhr, settings)
+            },
+            success : function(data) {
+                role = data.role
+                $("#user").html(data.name);
+                auth = false;
+                if (data != '') {
+                    auth = true;
+                }
+                $(".unauthenticated").toggle(!auth);
+                $(".authenticated").toggle(auth);
+                $(".user").toggle(data.role.includes('ROLE_USER'));
+                $(".admin").toggle(data.role.includes('ROLE_ADMIN'));
+            },
+            error : function(request, textStatus, errorThrown) {
+                console.log(request.responseText);
+                console.log(textStatus);
+                console.log(errorThrown);
             }
-            $(".unauthenticated").toggle(!auth);
-            $(".authenticated").toggle(auth);
-            $(".user").toggle(data.role.includes('ROLE_USER'));
-            $(".admin").toggle(data.role.includes('ROLE_ADMIN'));
-            return true;
         });
     };
 
@@ -100,6 +111,7 @@
                 $("#statistic").html(res);
             },
             error : function(request, textStatus, errorThrown) {
+                $("#statistic").html(request.responseText);
                 console.log(request.responseText);
                 console.log(textStatus);
                 console.log(errorThrown);

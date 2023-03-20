@@ -18,9 +18,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure( HttpSecurity http) throws Exception {
         // @formatter:off
         http
-            .authorizeRequests().anyRequest().permitAll()
+            .authorizeRequests()
                 .antMatchers( HttpMethod.OPTIONS, "/**").permitAll()
-                .antMatchers( "/webjars/**").permitAll()
                 .antMatchers( "/getInstanceId").hasAnyRole( "USER", "ADMIN")
                 .antMatchers( "/getStatistic").hasAnyRole( "ADMIN")
                 .anyRequest().authenticated()
