@@ -3,12 +3,6 @@ server:
 spring:
   application:
     name: gateway-zuul
-logging:
-  pattern:
-    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
-  level:
-    org:
-      springframework: INFO     
 eureka:
   client:
     register-with-eureka: true

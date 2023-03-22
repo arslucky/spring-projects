@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration> 
+
+    <springProperty name="app.name" source="spring.application.name"/>
+    <springProperty name="app.port" source="server.port"/>
+    <springProperty name="logs" source="log.dir"/>
+    <!-- 
+    <define name="app.port" class="org.demo.ars.gateway.config.LoggingPropertiesDefiner">
+        <propertyLookupKey>app.port</propertyLookupKey>
+    </define>
+    -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss} %highlight([%-5level]) %yellow(%C{1}) - %msg%n</Pattern>
+        </layout>
+    </appender>
+    
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logs}/oauth2.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{ISO8601} [%level] ${HOSTNAME}:${app.port} ${app.name} - %C{1} - %msg%n
+            </Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logs}/archived/oauth2-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+    </appender>
+       
+    <root level="info">
+        <appender-ref ref="Console" />
+        <appender-ref ref="RollingFile" />
+    </root>
+</configuration>
