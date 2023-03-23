@@ -19,7 +19,7 @@
         <file>${logs}/oauth2.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
-                %d{ISO8601} [%level] ${HOSTNAME}:${app.port} ${app.name} - %C{1} - %msg%n
+                %d{ISO8601} [%level] ${HOSTNAME}:${app.port} ${app.name} [%X{trace-id}] %C{1} - %msg%n
             </Pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
