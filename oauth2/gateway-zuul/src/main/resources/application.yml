@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: gateway-zuul
+  kafka:
+    bootstrap-servers:
+      - ${kafka.host}:${kafka.port}
 eureka:
   client:
     register-with-eureka: true

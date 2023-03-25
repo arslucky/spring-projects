@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: log-server
+  kafka:
+    bootstrap-servers:
+      - ${kafka.host}:${kafka.port}

@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: eureka-server
+  kafka:
+    bootstrap-servers:
+      - ${kafka.host}:${kafka.port}    
 eureka:
 #  instance:
 #    hostname: ${eureka_instance_hostname}

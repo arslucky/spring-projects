@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="ui">
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} %highlight{[%-5level]} %yellow{%C{1}} - %msg%n" />
+        </Console>
+        <File name="File" fileName="${app:log.dir}/${app:log.file}">
+            <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{1} - %msg%n" />
+        </File>
+        <Kafka name="Kafka" topic="log">
+            <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{1} - %msg%n" />
+            <Property name="bootstrap.servers">${app:kafka.host}:${app:kafka.port}</Property>
+        </Kafka>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="File" />
+            <AppenderRef ref="Kafka" />
+        </Root>
+    </Loggers>
+</Configuration>

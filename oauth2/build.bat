@@ -4,8 +4,9 @@ set JAVA_HOME_18=D:\java\jdk-18.0.2
 set JAVA_HOME=%JAVA_HOME_18%
 set log.dir=logs
 
-call mvn clean package -DskipTests
+call mvn clean package install -DskipTests
 
+start "log-server" cmd /k "%JAVA_HOME_18%\bin\java.exe -jar .\log-server\target\log-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
 start "eureka-server" cmd /k "%JAVA_HOME_18%\bin\java.exe -jar .\eureka-server\target\eureka-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
 timeout 3
 start "auth-server" cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\authorization-server\target\authorization-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"

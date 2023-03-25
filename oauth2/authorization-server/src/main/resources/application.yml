@@ -1,6 +1,9 @@
 spring:
   application:
     name: authorization-server
+  kafka:
+    bootstrap-servers:
+      - ${kafka.host}:${kafka.port}    
 server:
   port: ${port}
   context-path: /uaa
