@@ -1,4 +1,4 @@
-mvn clean package -DskipTests
+#mvn clean package -DskipTests
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir
@@ -15,12 +15,12 @@ zoo=zookeeper
 zoo_port=2181
 
 docker rm -f $zoo
-docker run -dp $zoo_port:$zoo_port --network $network --network-alias $zoo --name $zoo \
+docker run -d --network $network --network-alias $zoo --name $zoo \
     -e ALLOW_ANONYMOUS_LOGIN=yes \
     bitnami/zookeeper:3.7.1
 
 docker rm -f $kafka
-docker run -dp $kafka_port:$kafka_port --network $network --network-alias $kafka --name $kafka \
+docker run -dp $kafka_port:$kafka_port --network $network --network-alias $kafka --hostname $kafka --name $kafka \
     -e ALLOW_PLAINTEXT_LISTENER=yes \
     -e KAFKA_CFG_ZOOKEEPER_CONNECT=$zoo:$zoo_port \
     bitnami/kafka:3.3.2
