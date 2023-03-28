@@ -1,4 +1,4 @@
-#mvn clean package -DskipTests
+mvn clean package -DskipTests
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir

@@ -8,11 +8,13 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.lookup.StrLookup;
 import org.slf4j.Logger;
@@ -26,31 +28,51 @@ import org.slf4j.event.Level;
 @Plugin( name = "app", category = "Lookup")
 public class AppPropertiesLookup implements StrLookup {
 
+    private static final String LOG4J2_XML = "log4j2.xml";
+
     private static Map<String, String> map = new HashMap<>();
+
+    private static boolean initialized = false;
+
+    private static ReentrantLock rel = new ReentrantLock();
 
     static {
         init();
     }
 
-    // order has to be after init
-    private static Logger logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
+    private static Logger logger;
 
     public static void init() {
         try {
-            Properties prop = new Properties();
-            prop.putAll( PropertiesUtils.loadPropertiesFromYaml());
-            prop.putAll( PropertiesUtils.loadProperties());
-            prop.putAll( System.getenv());
+            if( !initialized && rel.tryLock()) {
+                Properties prop = new Properties();
+                prop.putAll( PropertiesUtils.loadPropertiesFromYaml( "application"));
+                prop.putAll( PropertiesUtils.loadProperties( "default"));
+                prop.putAll( PropertiesUtils.loadProperties( "application"));
+                prop.putAll( System.getenv());
 
-            map.put( "name", String.valueOf( prop.get( "spring.application.name")));
-            map.put( "host", InetAddress.getLocalHost().getHostName());
-            map.put( "port", getValue( String.valueOf( prop.get( "server.port")), String.valueOf( prop.get( "port"))));
-            map.put( "log.dir", String.valueOf( prop.get( "log.dir")));
-            map.put( "log.file", String.valueOf( prop.get( "log.file")));
-            map.put( "kafka.host", String.valueOf( prop.get( "kafka.host")));
-            map.put( "kafka.port", String.valueOf( prop.get( "kafka.port")));
+                map.put( "name", String.valueOf( prop.get( "spring.application.name")));
+                map.put( "host", InetAddress.getLocalHost().getHostName());
+                map.put( "port", getValue( String.valueOf( prop.get( "server.port")), String.valueOf( prop.get( "port"))));
+                map.put( "log.dir", String.valueOf( prop.get( "log.dir")));
+                map.put( "log.file", String.valueOf( prop.get( "log.file")));
+                map.put( "kafka.host", String.valueOf( prop.get( "kafka.host")));
+                map.put( "kafka.port", String.valueOf( prop.get( "kafka.port")));
+
+                System.setProperty( "kafka.host", map.get( "kafka.host"));
+                System.setProperty( "kafka.port", map.get( "kafka.port"));
+
+                Configurator.initialize( null, LOG4J2_XML);
+                logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
+
+                log( Level.INFO, map.toString());
+
+                initialized = true;
+            }
         } catch( Exception e) {
             log( Level.ERROR, "Error:", e);
+        } finally {
+            rel.unlock();
         }
     }
 
@@ -59,7 +81,7 @@ public class AppPropertiesLookup implements StrLookup {
 
         try {
             ClassLoader classLoader = AppPropertiesLookup.class.getClassLoader();
-            URL file = classLoader.getResource( "log4j2.xml");
+            URL file = classLoader.getResource( LOG4J2_XML);
             LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext( false);
             context.setConfigLocation( file.toURI());
 
@@ -76,12 +98,12 @@ public class AppPropertiesLookup implements StrLookup {
 
     @Override
     public String lookup( String key) {
-        log( Level.INFO, String.format( "getting key: %s, map.isNull: %s", key, map == null));
-        if( map == null) {
-            return null;
+
+        if( !initialized) {
+            init();
         }
         String value = map.get( key);
-        log( Level.INFO, String.format( "key: %s, value: %s", key, value));
+        log( Level.INFO, String.format( "%s=%s", key, value));
 
         return value;
     }
@@ -116,4 +138,5 @@ public class AppPropertiesLookup implements StrLookup {
         }
         return value2;
     }
+
 }

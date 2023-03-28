@@ -2,7 +2,7 @@ set JAVA_HOME_8=D:\java\jdk1.8.0_45
 set JAVA_HOME_18=D:\java\jdk-18.0.2
 
 set JAVA_HOME=%JAVA_HOME_18%
-set log.dir=logs
+set log.dir=c:\logs
 
 call mvn clean package install -DskipTests
 
