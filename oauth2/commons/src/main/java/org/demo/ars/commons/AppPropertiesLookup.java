@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.StringUtils;
@@ -44,8 +45,9 @@ public class AppPropertiesLookup implements StrLookup {
 
     public static void init() {
         try {
-            if( !initialized && rel.tryLock()) {
+            if( rel.tryLock( 1, TimeUnit.SECONDS) && !initialized) {
                 Properties prop = new Properties();
+
                 prop.putAll( PropertiesUtils.loadPropertiesFromYaml( "application"));
                 prop.putAll( PropertiesUtils.loadProperties( "default"));
                 prop.putAll( PropertiesUtils.loadProperties( "application"));
@@ -54,13 +56,30 @@ public class AppPropertiesLookup implements StrLookup {
                 map.put( "name", String.valueOf( prop.get( "spring.application.name")));
                 map.put( "host", InetAddress.getLocalHost().getHostName());
                 map.put( "port", getValue( String.valueOf( prop.get( "server.port")), String.valueOf( prop.get( "port"))));
+
                 map.put( "log.dir", String.valueOf( prop.get( "log.dir")));
                 map.put( "log.file", String.valueOf( prop.get( "log.file")));
+                map.put( "log.level", String.valueOf( prop.get( "log.level")));
+
                 map.put( "kafka.host", String.valueOf( prop.get( "kafka.host")));
                 map.put( "kafka.port", String.valueOf( prop.get( "kafka.port")));
 
+                map.put( "zoo.host", String.valueOf( prop.get( "zoo.host")));
+                map.put( "zoo.port", String.valueOf( prop.get( "zoo.port")));
+
+                map.put( "config.server.host", String.valueOf( prop.get( "config.server.host")));
+                map.put( "config.server.port", String.valueOf( prop.get( "config.server.port")));
+
+                /************************************************************/
+
                 System.setProperty( "kafka.host", map.get( "kafka.host"));
                 System.setProperty( "kafka.port", map.get( "kafka.port"));
+
+                System.setProperty( "zoo.host", map.get( "zoo.host"));
+                System.setProperty( "zoo.port", map.get( "zoo.port"));
+
+                System.setProperty( "config.server.host", map.get( "config.server.host"));
+                System.setProperty( "config.server.port", map.get( "config.server.port"));
 
                 Configurator.initialize( null, LOG4J2_XML);
                 logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
@@ -96,6 +115,10 @@ public class AppPropertiesLookup implements StrLookup {
         map.put( key, value);
     }
 
+    public static String get( String key) {
+        return map.get( key);
+
+    }
     @Override
     public String lookup( String key) {
 

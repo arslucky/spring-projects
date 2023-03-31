@@ -4,3 +4,25 @@ spring:
   kafka:
     bootstrap-servers:
       - ${kafka.host}:${kafka.port}
+  config:
+    import: 
+      - optional:configserver:http://${config.server.host}:${config.server.port} 
+  cloud:
+    config:
+      name: oauth2  
+    bus:
+      enabled: true
+    stream:
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none      

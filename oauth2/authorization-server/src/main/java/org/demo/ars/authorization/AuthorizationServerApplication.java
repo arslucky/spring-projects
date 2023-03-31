@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@SpringBootApplication
+@SpringBootApplication( scanBasePackages = { "org.demo.ars.authorization", "org.demo.ars.commons" })
 public class AuthorizationServerApplication {
 
     private Logger logger = LoggerFactory.getLogger( getClass());

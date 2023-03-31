@@ -5,7 +5,31 @@ spring:
     name: eureka-server
   kafka:
     bootstrap-servers:
-      - ${kafka.host}:${kafka.port}    
+      - ${kafka.host}:${kafka.port}
+    consumer:
+      client-id: ${spring.application.name} 
+  config:
+    import: 
+      - optional:configserver:http://${config.server.host}:${config.server.port} 
+  cloud:
+    config:
+      name: oauth2
+    bus:
+      enabled: true
+    stream:
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
 eureka:
 #  instance:
 #    hostname: ${eureka_instance_hostname}

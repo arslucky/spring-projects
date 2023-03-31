@@ -6,6 +6,8 @@ set log.dir=c:\logs
 
 call mvn clean package install -DskipTests
 
+start "config-server" cmd /k "%JAVA_HOME_18%\bin\java.exe -jar .\config-server\target\config-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
+timeout 5
 start "log-server" cmd /k "%JAVA_HOME_18%\bin\java.exe -jar .\log-server\target\log-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
 start "eureka-server" cmd /k "%JAVA_HOME_18%\bin\java.exe -jar .\eureka-server\target\eureka-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
 timeout 3

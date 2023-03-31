@@ -1,0 +1,47 @@
+server:
+  port: ${config.server.port}  
+spring:
+  kafka:
+    bootstrap-servers:
+    - ${kafka.host}:${kafka.port}
+    consumer:
+      client-id: ${spring.application.name}
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        accept-empty: false
+        git:
+          default-label: main
+          uri: https://github.com/arslucky/properties
+          refresh-rate: 30
+    bus:
+      enabled: true
+    stream:
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - refresh
+        - busrefresh
+        - busenv
+  endpoint:
+    health:
+      show-details: always

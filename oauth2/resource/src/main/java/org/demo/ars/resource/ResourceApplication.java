@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @EnableDiscoveryClient
 @EnableResourceServer
-@SpringBootApplication
+@SpringBootApplication( scanBasePackages = { "org.demo.ars.resource", "org.demo.ars.commons" })
 public class ResourceApplication {
 
     Logger log = LoggerFactory.getLogger( this.getClass());

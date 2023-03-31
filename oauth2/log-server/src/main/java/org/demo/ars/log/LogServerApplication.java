@@ -13,7 +13,7 @@ import org.springframework.kafka.config.TopicBuilder;
  * @author arsen.ibragimov
  *
  */
-@SpringBootApplication
+@SpringBootApplication( scanBasePackages = { "org.demo.ars.log", "org.demo.ars.commons" })
 public class LogServerApplication {
 
     private static Logger log = LoggerFactory.getLogger( LogServerApplication.class);
@@ -31,7 +31,6 @@ public class LogServerApplication {
 
     @KafkaListener( id = "logId", topics = topic)
     public void listen( String in) {
-        // System.out.print( in);
         log.info( in);
     }
 }

@@ -1,4 +1,4 @@
-mvn clean package -DskipTests
+mvn clean install -DskipTests
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir
@@ -8,15 +8,19 @@ auth=auth-server
 eureka=eureka-server
 kafka=kafka
 kafka_port=9092
+conf=config-server
+conf_port=8889
 
 docker network create $network
+
 ##########################################################################################
 zoo=zookeeper
 zoo_port=2181
 
 docker rm -f $zoo
-docker run -d --network $network --network-alias $zoo --name $zoo \
+docker run -dp $zoo_port:$zoo_port --network $network --network-alias $zoo --hostname $zoo --name $zoo \
     -e ALLOW_ANONYMOUS_LOGIN=yes \
+    -e ZOO_PORT_NUMBER=$zoo_port \
     bitnami/zookeeper:3.7.1
 
 docker rm -f $kafka
@@ -29,6 +33,18 @@ docker exec -it $kafka /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic l
 
 ##########################################################################################
 
+docker rm -f $conf
+docker rmi -f $conf
+docker build -t $conf ./config-server
+docker run -dp $conf_port:$conf_port --network $network --network-alias $conf --name $conf \
+    -v $log_host_dir:$log_container_dir \
+    -e log.dir=$log_dir \
+    -e kafka.host=$kafka \
+    -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    $conf
+
 log=log-server
 
 docker rm -f $log
@@ -39,6 +55,8 @@ docker run -d --network $network --network-alias $log --name $log \
     -e log.dir=$log_dir \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     $log
 
 docker rm -f $eureka
@@ -50,6 +68,8 @@ docker run -dp 8761:8761 --network $network --network-alias $eureka --name $eure
     -e log.dir=$log_dir \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     $eureka
 
 docker rm -f $auth
@@ -61,6 +81,10 @@ docker run -dp 9000:9000 --network $network --network-alias $auth --name $auth \
     -e host=$auth \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     $auth
 
 gtw=gateway
@@ -75,6 +99,10 @@ docker run -dp 8080:8080 --network $network --network-alias $gtw --name $gtw \
     -e eureka.host=$eureka \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     $gtw
 
 ui1=ui1
@@ -92,7 +120,12 @@ docker run -d --network $network --name $ui1 --network-alias $ui1 \
     -e eureka.instance.hostname=$ui1 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     ui
+
 docker run -d --network $network --name $ui2 --network-alias $ui2 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
@@ -101,6 +134,10 @@ docker run -d --network $network --name $ui2 --network-alias $ui2 \
     -e eureka.instance.hostname=$ui2 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     ui
 
 res1=resource1
@@ -118,7 +155,12 @@ docker run -d --network $network --name $res1 --network-alias $res1 \
     -e eureka.instance.hostname=$res1 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
     resource
+
 docker run -d --network $network --name $res2 --network-alias $res2 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
@@ -127,4 +169,8 @@ docker run -d --network $network --name $res2 --network-alias $res2 \
     -e eureka.instance.hostname=$res2 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
-    resource
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    resource    

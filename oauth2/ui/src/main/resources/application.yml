@@ -1,11 +1,35 @@
+server:
+  port: ${port}
 spring:
   application:
     name: ui
   kafka:
     bootstrap-servers:
-      - ${kafka.host}:${kafka.port}    
-server:
-  port: ${port}
+      - ${kafka.host}:${kafka.port}
+  cloud:
+    config:
+      name: oauth2
+      uri: http://${config.server.host}:${config.server.port}  
+    bus:
+      enabled: true
+    stream:
+      kafka:
+        binder:
+          zkNodes: ${zoo.host}
+          defaultZkPort: ${zoo.port}    
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: raw
+          consumer:
+            header-mode: raw
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: raw
+          consumer:
+            header-mode: raw          
 eureka:
   client:
     register-with-eureka: true

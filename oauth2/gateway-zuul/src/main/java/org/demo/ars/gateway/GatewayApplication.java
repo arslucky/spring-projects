@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RibbonClients( defaultConfiguration = RibbonConfiguration.class)
 @EnableDiscoveryClient
 @EnableZuulProxy
-@SpringBootApplication
+@SpringBootApplication( scanBasePackages = { "org.demo.ars.gateway", "org.demo.ars.commons" })
 public class GatewayApplication {
 
 	public static void main(String[] args) {
