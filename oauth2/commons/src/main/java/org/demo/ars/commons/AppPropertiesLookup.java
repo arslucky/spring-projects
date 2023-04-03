@@ -61,6 +61,8 @@ public class AppPropertiesLookup implements StrLookup {
                 map.put( "log.file", String.valueOf( prop.get( "log.file")));
                 map.put( "log.level", String.valueOf( prop.get( "log.level")));
 
+                map.put( "log.error.file", String.valueOf( prop.get( "log.error.file")));
+
                 map.put( "kafka.host", String.valueOf( prop.get( "kafka.host")));
                 map.put( "kafka.port", String.valueOf( prop.get( "kafka.port")));
 
