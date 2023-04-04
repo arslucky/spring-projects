@@ -72,6 +72,12 @@ public class AppPropertiesLookup implements StrLookup {
                 map.put( "config.server.host", String.valueOf( prop.get( "config.server.host")));
                 map.put( "config.server.port", String.valueOf( prop.get( "config.server.port")));
 
+                map.put( "auth.host", String.valueOf( prop.get( "auth.host")));
+                map.put( "auth.port", String.valueOf( prop.get( "auth.port")));
+                map.put( "auth.host.authorization", String.valueOf( prop.get( "auth.host.authorization")));
+
+                map.put( "eureka.host", String.valueOf( prop.get( "eureka.host")));
+                map.put( "eureka.port", String.valueOf( prop.get( "eureka.port")));
                 /************************************************************/
 
                 System.setProperty( "kafka.host", map.get( "kafka.host"));
@@ -82,6 +88,13 @@ public class AppPropertiesLookup implements StrLookup {
 
                 System.setProperty( "config.server.host", map.get( "config.server.host"));
                 System.setProperty( "config.server.port", map.get( "config.server.port"));
+
+                System.setProperty( "auth.host", map.get( "auth.host"));
+                System.setProperty( "auth.port", map.get( "auth.port"));
+                System.setProperty( "auth.host.authorization", map.get( "auth.host.authorization"));
+
+                System.setProperty( "eureka.host", map.get( "eureka.host"));
+                System.setProperty( "eureka.port", map.get( "eureka.port"));
 
                 Configurator.initialize( null, LOG4J2_XML);
                 logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
@@ -118,9 +131,12 @@ public class AppPropertiesLookup implements StrLookup {
     }
 
     public static String get( String key) {
+        if( !initialized) {
+            init();
+        }
         return map.get( key);
-
     }
+
     @Override
     public String lookup( String key) {
 

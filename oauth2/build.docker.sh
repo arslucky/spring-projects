@@ -1,4 +1,7 @@
-mvn clean install -DskipTests
+export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
+export JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
+
+mvn clean install --global-toolchains toolchains.xml
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir

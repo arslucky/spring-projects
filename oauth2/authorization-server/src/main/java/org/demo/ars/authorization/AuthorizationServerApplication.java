@@ -25,11 +25,6 @@ public class AuthorizationServerApplication {
         return user;
     }
 
-    @RequestMapping( "/test")
-    public String test() {
-        return "test";
-    }
-
     public static void main( String[] args) {
         SpringApplication.run( AuthorizationServerApplication.class, args);
     }

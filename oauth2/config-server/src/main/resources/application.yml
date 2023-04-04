@@ -1,13 +1,13 @@
 server:
   port: ${config.server.port}  
 spring:
+  application:
+    name: config-server
   kafka:
     bootstrap-servers:
     - ${kafka.host}:${kafka.port}
     consumer:
       client-id: ${spring.application.name}
-  application:
-    name: config-server
   cloud:
     config:
       server:

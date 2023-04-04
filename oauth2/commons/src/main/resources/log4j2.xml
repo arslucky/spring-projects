@@ -36,7 +36,7 @@
         <Root level="${app:log.level}">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
-            <AppenderRef ref="RollingFileError" level="WARN"/>
+            <AppenderRef ref="RollingFileError" level="WARN" />
             <AppenderRef ref="Kafka" />
         </Root>
     </Loggers>
