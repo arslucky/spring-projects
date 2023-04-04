@@ -1,7 +1,7 @@
 export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
 export JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
 
-mvn clean install --global-toolchains toolchains.xml
+mvn clean install
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir
@@ -12,7 +12,7 @@ eureka=eureka-server
 kafka=kafka
 kafka_port=9092
 conf=config-server
-conf_port=8889
+conf_port=8888
 
 docker network create $network
 

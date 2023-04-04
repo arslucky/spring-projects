@@ -4,7 +4,7 @@ set JAVA_HOME_17=D:\java\jdk-17.0.6
 set JAVA_HOME=%JAVA_HOME_17%
 set log.dir=c:\logs
 
-call mvn clean package install --global-toolchains toolchains.xml
+call mvn clean package install
 
 start "config-server" cmd /k "%JAVA_HOME_17%\bin\java.exe -jar .\config-server\target\config-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
 timeout 5
