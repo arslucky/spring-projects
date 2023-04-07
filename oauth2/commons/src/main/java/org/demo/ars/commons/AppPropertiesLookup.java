@@ -51,6 +51,7 @@ public class AppPropertiesLookup implements StrLookup {
                 prop.putAll( PropertiesUtils.loadPropertiesFromYaml( "application"));
                 prop.putAll( PropertiesUtils.loadProperties( "default"));
                 prop.putAll( PropertiesUtils.loadProperties( "application"));
+                prop.putAll( System.getProperties());
                 prop.putAll( System.getenv());
 
                 map.put( "name", String.valueOf( prop.get( "spring.application.name")));
@@ -90,6 +91,8 @@ public class AppPropertiesLookup implements StrLookup {
 
                 System.setProperty( "config.server.host", map.get( "config.server.host"));
                 System.setProperty( "config.server.port", map.get( "config.server.port"));
+                //For Spring Boot 1.5.22
+                System.setProperty( "spring.cloud.config.uri", String.format( "http://%s:%s", map.get( "config.server.host"), map.get( "config.server.port")));
 
                 System.setProperty( "auth.host", map.get( "auth.host"));
                 System.setProperty( "auth.port", map.get( "auth.port"));

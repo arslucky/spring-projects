@@ -2,26 +2,36 @@ set JAVA_HOME_8=D:\java\jdk1.8.0_45
 set JAVA_HOME_17=D:\java\jdk-17.0.6
 
 set JAVA_HOME=%JAVA_HOME_17%
-set log.dir=c:\logs
 
-::::::::::::::::::::: Maven comand line params for testing ::::::::::::::::::::::::::::::::::::::::::::::::::
+set log_dir=c:\logs
+set auth=localhost
+set auth_port=9000
+set eureka=localhost
+set eureka_port=8762
+set kafka=localhost
+set kafka_port=9093
+set zoo=localhost
+set zoo_port=2182
+set conf=localhost
+set conf_port=8889
+
+::::::::::::::::::::: Maven command line params for testing :::::::::::::::::::::::::::::::::::::::::::::::::
 :: group-tests=integration-tests, turn on integration tests without connection to external microservices   ::
 :: group-tests=ms-integration-tests, turn on microservice integration tests, involving 'integration-tests' ::
 :: bus.enable=false, switch off Bus/Kafka feature, true by default                                         :: 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-:: call mvn clean package install -Dgroup-tests=ms-integration-tests                                       :: 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-call mvn clean package install
-
-start "config-server" cmd /k "%JAVA_HOME_17%\bin\java.exe -jar .\config-server\target\config-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-timeout 5
-start "log-server" cmd /k "%JAVA_HOME_17%\bin\java.exe -jar .\log-server\target\log-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "eureka-server" cmd /k "%JAVA_HOME_17%\bin\java.exe -jar .\eureka-server\target\eureka-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-timeout 3
-start "auth-server" cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\authorization-server\target\authorization-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "gateway"     cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\gateway-zuul\target\gateway-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "ui-1"        cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\ui\target\ui-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "ui-2"        cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\ui\target\ui-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "resource-1"  cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\resource\target\resource-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
-start "resource-2"  cmd /k "%JAVA_HOME_8%\bin\java.exe -jar .\resource\target\resource-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
+call mvn clean package install ^
+    -Dlog.dir=%log_dir% ^
+    -Dgroup-tests=none ^
+    -Dbus.enable=false ^
+    -Dauth.host=%auth% ^
+    -Dauth.port=%auth_port% ^
+    -Deureka.host=%eureka% ^
+    -Deureka.port=%eureka_port% ^
+    -Dkafka.host=%kafka% ^
+    -Dkafka.port=%kafka_port% ^
+    -Dzoo.host=%zoo% ^
+    -Dzoo.port=%zoo_port% ^
+    -Dconfig.server.host=%conf% ^
+    -Dconfig.server.port=%conf_port%

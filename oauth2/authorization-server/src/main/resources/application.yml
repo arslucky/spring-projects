@@ -1,5 +1,5 @@
 server:
-  port: ${port}
+  port: ${auth.port}
   context-path: /uaa
 spring:
   application:
@@ -10,7 +10,7 @@ spring:
   cloud:
     config:
       name: oauth2
-      uri: http://${config.server.host}:${config.server.port} 
+#      uri: http://${config.server.host}:${config.server.port} has to be set exactly as -Dspring.cloud.config.uri=<value>
     bus:
       enabled: ${bus.enable:true}
     stream:
@@ -36,7 +36,7 @@ security:
     password: none
   oauth2:
     resource:
-      user-info-uri: http://${host}:${server.port}/uaa/user
+      user-info-uri: http://${auth.host}:${auth.port}/uaa/user
 management:
   health:
     defaults:

@@ -19,7 +19,6 @@ class LogServerApplicationUnitTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( AppPropertiesLookup.get( "log.dir"), "c:/logs");
         assertEquals( AppPropertiesLookup.get( "log.file"), "oauth2_server.log");
     }
 }

@@ -9,7 +9,7 @@ spring:
   cloud:
     config:
       name: oauth2
-      uri: http://${config.server.host}:${config.server.port} 
+#      uri: http://${config.server.host}:${config.server.port} has to be set exactly as -Dspring.cloud.config.uri=<value> 
     bus:
       enabled: ${bus.enable:true}
     stream:

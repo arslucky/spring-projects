@@ -1,5 +1,5 @@
 server:
-  port: ${port}
+  port: ${eureka.port}
 spring:
   application:
     name: eureka-server
@@ -38,7 +38,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://${host}:${server.port}/eureka/
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka/
   server:
     enable-self-preservation: false
 #    expected-client-renewal-interval-seconds: ${eureka.heartbeat.sending.interval:1}

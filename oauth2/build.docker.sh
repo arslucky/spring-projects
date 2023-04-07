@@ -1,35 +1,27 @@
 export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
 export JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
-
 export JAVA_HOME=$JAVA_HOME_17
-
-###################: Maven comand line params for testing ##################################################
-# group-tests=integration-tests, turn on integration tests without connection to external microservices   ##
-# group-tests=ms-integration-tests, turn on microservice integration tests, involving 'integration-tests' ##
-# bus.enable=false, switch off Bus/Kafka feature, true by default                                         ## 
-############################################################################################################
-# call mvn clean package install -Dgroup-tests=ms-integration-tests                                       ## 
-############################################################################################################
-
-mvn clean install
 
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir
 log_container_dir=/app/$log_dir
 network=oauth2
 auth=auth-server
+auth_port=9000
 eureka=eureka-server
+eureka_port=8762
 kafka=kafka
-kafka_port=9092
+kafka_port=9093
+zoo=zookeeper
+zoo_port=2182
 conf=config-server
-conf_port=8888
+conf_port=8889
+
+##########################################################################################
 
 docker network create $network
 
 ##########################################################################################
-zoo=zookeeper
-zoo_port=2181
-
 docker rm -f $zoo
 docker run -dp $zoo_port:$zoo_port --network $network --network-alias $zoo --hostname $zoo --name $zoo \
     -e ALLOW_ANONYMOUS_LOGIN=yes \
@@ -40,7 +32,11 @@ docker rm -f $kafka
 docker run -dp $kafka_port:$kafka_port --network $network --network-alias $kafka --hostname $kafka --name $kafka \
     -e ALLOW_PLAINTEXT_LISTENER=yes \
     -e KAFKA_CFG_ZOOKEEPER_CONNECT=$zoo:$zoo_port \
+    -e KAFKA_CFG_LISTENERS=PLAINTEXT://:$kafka_port \
+    -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:$kafka_port \
     bitnami/kafka:3.3.2
+
+echo "creating log topic"
 
 docker exec -it $kafka /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic log --bootstrap-server $kafka:$kafka_port
 
@@ -75,9 +71,9 @@ docker run -d --network $network --network-alias $log --name $log \
 docker rm -f $eureka
 docker rmi -f $eureka
 docker build -t $eureka ./eureka-server
-docker run -dp 8761:8761 --network $network --network-alias $eureka --name $eureka \
+docker run -dp $eureka_port:$eureka_port --network $network --network-alias $eureka --name $eureka \
     -v $log_host_dir:$log_container_dir \
-    -e port=8761 \
+    -e port=$eureka_port \
     -e log.dir=$log_dir \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
@@ -88,10 +84,11 @@ docker run -dp 8761:8761 --network $network --network-alias $eureka --name $eure
 docker rm -f $auth
 docker rmi -f $auth
 docker build -t $auth ./authorization-server
-docker run -dp 9000:9000 --network $network --network-alias $auth --name $auth \
+docker run -dp $auth_port:$auth_port --network $network --network-alias $auth --name $auth \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e host=$auth \
+    -e port=$auth_port \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
     -e zoo.host=$zoo \
@@ -109,7 +106,9 @@ docker run -dp 8080:8080 --network $network --network-alias $gtw --name $gtw \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e auth.host=$auth \
+    -e auth.port=$auth_port \
     -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
     -e zoo.host=$zoo \
@@ -129,7 +128,9 @@ docker run -d --network $network --name $ui1 --network-alias $ui1 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e auth.host=$auth \
+    -e auth.port=$auth_port \
     -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
     -e eureka.instance.hostname=$ui1 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
@@ -143,7 +144,9 @@ docker run -d --network $network --name $ui2 --network-alias $ui2 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e auth.host=$auth \
+    -e auth.port=$auth_port \
     -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
     -e eureka.instance.hostname=$ui2 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
@@ -164,7 +167,9 @@ docker run -d --network $network --name $res1 --network-alias $res1 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e auth.host=$auth \
+    -e auth.port=$auth_port \
     -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
     -e eureka.instance.hostname=$res1 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \
@@ -178,7 +183,9 @@ docker run -d --network $network --name $res2 --network-alias $res2 \
     -v $log_host_dir:$log_container_dir \
     -e log.dir=$log_dir \
     -e auth.host=$auth \
+    -e auth.port=$auth_port \
     -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
     -e eureka.instance.hostname=$res2 \
     -e kafka.host=$kafka \
     -e kafka.port=$kafka_port \

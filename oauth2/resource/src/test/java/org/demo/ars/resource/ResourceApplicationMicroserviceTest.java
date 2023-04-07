@@ -15,6 +15,7 @@ import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,7 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Integration tests with real connection to external authorization-server
+ * Integration tests with real connection to external authorization-server, config-server
  *
  * @author arsen.ibragimov
  *
@@ -46,6 +47,9 @@ public class ResourceApplicationMicroserviceTest {
 
     @Autowired
     private TestRestTemplate template;
+
+    @Autowired
+    private Environment env;
 
     private static String path = "http://localhost";
 
@@ -133,6 +137,11 @@ public class ResourceApplicationMicroserviceTest {
         assertEquals( HttpStatus.OK, response.getStatusCode());
     }
 
+    // ----------------------------------- config-server-----------------------------------------------//
+    @Test
+    public void checkConfigServer() {
+        assertEquals( env.getProperty( "verification"), "ok");
+    }
     // ------------------------------------- helpers --------------------------------------------------//
 
     private HttpHeaders createHttpBasicHeaders( String user, String password) {
