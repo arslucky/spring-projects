@@ -17,7 +17,7 @@ spring:
           uri: https://github.com/arslucky/properties
           refresh-rate: 30
     bus:
-      enabled: true
+      enabled: ${bus.enable:true}
     stream:
       bindings:
         springCloudBusOutput:

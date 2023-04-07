@@ -6,19 +6,20 @@ import java.net.UnknownHostException;
 
 import org.demo.ars.commons.AppPropertiesLookup;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 
-@SpringBootTest
-class LogServerApplicationTests {
+/**
+ * Unit tests
+ *
+ * @author arsen.ibragimov
+ *
+ */
+class LogServerApplicationUnitTests {
 
-    @Autowired
-    Environment env;
 
     @Test
     public void settings() throws UnknownHostException {
 
+        assertEquals( AppPropertiesLookup.get( "log.dir"), "c:/logs");
         assertEquals( AppPropertiesLookup.get( "log.file"), "oauth2_server.log");
     }
 }

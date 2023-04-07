@@ -80,6 +80,8 @@ public class AppPropertiesLookup implements StrLookup {
                 map.put( "eureka.port", String.valueOf( prop.get( "eureka.port")));
                 /************************************************************/
 
+                System.setProperty( "log.level", map.get( "log.level"));
+
                 System.setProperty( "kafka.host", map.get( "kafka.host"));
                 System.setProperty( "kafka.port", map.get( "kafka.port"));
 

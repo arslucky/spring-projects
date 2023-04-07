@@ -1,4 +1,4 @@
-package org.demo.ars.ui;
+package org.demo.ars.gateway;
 
 import static java.net.InetAddress.getLocalHost;
 import static org.junit.Assert.assertEquals;
@@ -12,15 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
+ * Integration tests without connection to external services
+ *
  * @author arsen.ibragimov
  *
  */
+@IfProfileValue( name = "group-tests", values = { "integration-tests", "ms-integration-tests" })
 @RunWith( SpringRunner.class)
 @SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
-public class UiApplicationTests {
+public class GatewayApplicationIntegrationTests {
 
     @Autowired
     Environment env;
@@ -28,10 +32,9 @@ public class UiApplicationTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( AppPropertiesLookup.get( "name"), "ui");
+        assertEquals( AppPropertiesLookup.get( "name"), "gateway-zuul");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
-        assertEquals( env.getProperty( "server.port"), "0");
+        assertEquals( AppPropertiesLookup.get( "port"), "8080");
     }
-
 }

@@ -24,6 +24,12 @@ public class AppRestController {
     @Autowired
     private ApplicationInfoManager applicationInfoManager;
 
+    private Environment env;
+
+    public AppRestController( Environment env) {
+        this.env = env;
+    }
+
     @RequestMapping( path = "/getDate", method = { RequestMethod.GET, RequestMethod.POST })
     String getDate() {
         return Calendar.getInstance().getTime().toString();
@@ -35,8 +41,8 @@ public class AppRestController {
         return instId;
     }
 
-    @GetMapping( path = "/getLogLevel")
-    String getLogLevel( Environment env) {
+    @RequestMapping( path = "/getLogLevel", method = { RequestMethod.GET, RequestMethod.POST })
+    String getLogLevel() {
         return env.getProperty( "log.level");
     }
 }

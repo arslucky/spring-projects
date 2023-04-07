@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 /**
  * @author arsen.ibragimov
@@ -21,8 +22,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
             .authorizeRequests()
                 .antMatchers( HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers( "/getInstanceId").hasAnyRole( "USER", "ADMIN")
-                .antMatchers( "/getStatistic").hasAnyRole( "ADMIN")
+                .antMatchers( "/getLogLevel").hasAnyRole( "ADMIN")
                 .anyRequest().authenticated()
+            .and()
+                .csrf()
+                    .csrfTokenRepository( CookieCsrfTokenRepository.withHttpOnlyFalse())
                 //access( "#oauth2.hasScope('read')")
                 ;
         // @formatter:on

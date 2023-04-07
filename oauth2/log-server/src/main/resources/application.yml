@@ -11,7 +11,7 @@ spring:
     config:
       name: oauth2  
     bus:
-      enabled: true
+      enabled: ${bus.enable:true}
     stream:
       bindings:
         springCloudBusOutput:

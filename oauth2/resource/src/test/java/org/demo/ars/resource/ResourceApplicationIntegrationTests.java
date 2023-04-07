@@ -1,19 +1,30 @@
-package org.demo.ars.eureka;
+package org.demo.ars.resource;
 
 import static java.net.InetAddress.getLocalHost;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
 import org.demo.ars.commons.AppPropertiesLookup;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Integration tests without connection to external services
+ *
+ * @author arsen.ibragimov
+ *
+ */
+@IfProfileValue( name = "group-tests", values = { "integration-tests", "ms-integration-tests" })
+@RunWith( SpringRunner.class)
 @SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
-class EurekaServerApplicationTests {
+public class ResourceApplicationIntegrationTests {
 
     @Autowired
     Environment env;
@@ -21,10 +32,10 @@ class EurekaServerApplicationTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( AppPropertiesLookup.get( "name"), "eureka-server");
+        assertEquals( AppPropertiesLookup.get( "name"), "resource");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
-        assertEquals( AppPropertiesLookup.get( "eureka.port"), env.getProperty( "eureka.port"));
+        assertEquals( env.getProperty( "server.port"), "0");
     }
 
 }

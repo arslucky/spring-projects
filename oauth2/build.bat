@@ -4,6 +4,14 @@ set JAVA_HOME_17=D:\java\jdk-17.0.6
 set JAVA_HOME=%JAVA_HOME_17%
 set log.dir=c:\logs
 
+::::::::::::::::::::: Maven comand line params for testing ::::::::::::::::::::::::::::::::::::::::::::::::::
+:: group-tests=integration-tests, turn on integration tests without connection to external microservices   ::
+:: group-tests=ms-integration-tests, turn on microservice integration tests, involving 'integration-tests' ::
+:: bus.enable=false, switch off Bus/Kafka feature, true by default                                         :: 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: call mvn clean package install -Dgroup-tests=ms-integration-tests                                       :: 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 call mvn clean package install
 
 start "config-server" cmd /k "%JAVA_HOME_17%\bin\java.exe -jar .\config-server\target\config-server-0.0.1-SNAPSHOT.jar --log.dir=%log.dir%"
