@@ -33,14 +33,11 @@
         </Kafka>
     </Appenders>
     <Loggers>
-        <Logger name="KafkaLogger" level="${app:log.level}" additivity="false">
-            <AppenderRef ref="Kafka" />
-        </Logger>
-        
         <Root level="${app:log.level}">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
             <AppenderRef ref="RollingFileError" level="WARN" />
+            <AppenderRef ref="Kafka" level="${app:kafka.log.level}"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -7,13 +7,13 @@ set log_dir=c:\logs
 set auth=localhost
 set auth_port=9000
 set eureka=localhost
-set eureka_port=8762
+set eureka_port=8761
 set kafka=localhost
-set kafka_port=9093
+set kafka_port=9092
 set zoo=localhost
-set zoo_port=2182
+set zoo_port=2181
 set conf=localhost
-set conf_port=8889
+set conf_port=8888
 
 ::::::::::::::::::::: Maven command line params for testing :::::::::::::::::::::::::::::::::::::::::::::::::
 :: group-tests=integration-tests, turn on integration tests without connection to external microservices   ::
@@ -25,6 +25,7 @@ call mvn clean package install ^
     -Dlog.dir=%log_dir% ^
     -Dgroup-tests=none ^
     -Dbus.enable=false ^
+    -Dkafka.log.disable=true ^
     -Dauth.host=%auth% ^
     -Dauth.port=%auth_port% ^
     -Deureka.host=%eureka% ^

@@ -25,6 +25,7 @@ mvn clean install \
     -D log.dir=$log_host_dir \
     -D group-tests=none \
     -D bus.enable=false \
+    -D kafka.log.disable=true \
     -D auth.host=$auth \
     -D auth.port=$auth_port \
     -D eureka.host=$eureka \

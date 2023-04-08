@@ -29,9 +29,45 @@ import org.slf4j.event.Level;
 @Plugin( name = "app", category = "Lookup")
 public class AppPropertiesLookup implements StrLookup {
 
+    private static final String logDir = "log.dir";
+
+    private static final String logFile = "log.file";
+
+    private static final String logErrorFile = "log.error.file";
+
+    private static final String logLevel = "log.level";
+
+    private static final String kafkaLogDisable = "kafka.log.disable";
+
+    private static final String kafkaHost = "kafka.host";
+
+    private static final String kafkaPort = "kafka.port";
+
+    private static final String kafkaLogLevel = "kafka.log.level";
+
+    private static final String eurekaHost = "eureka.host";
+
+    private static final String eurekaPort = "eureka.port";
+
+    private static final String authHost = "auth.host";
+
+    private static final String authPort = "auth.port";
+
+    private static final String authHostAuthorization = "auth.host.authorization";
+
+    private static final String configServerHost = "config.server.host";
+
+    private static final String configServerPort = "config.server.port";
+
+    private static final String zooHost = "zoo.host";
+
+    private static final String zooPort = "zoo.port";
+    // For Spring Boot 1.5.22
+    private static final String springCloudConfigUri = "spring.cloud.config.uri";
+
     private static final String LOG4J2_XML = "log4j2.xml";
 
-    private static Map<String, String> map = new HashMap<>();
+    private static final Map<String, String> map = new HashMap<>();
 
     private static boolean initialized = false;
 
@@ -58,48 +94,51 @@ public class AppPropertiesLookup implements StrLookup {
                 map.put( "host", InetAddress.getLocalHost().getHostName());
                 map.put( "port", getValue( String.valueOf( prop.get( "server.port")), String.valueOf( prop.get( "port"))));
 
-                map.put( "log.dir", String.valueOf( prop.get( "log.dir")));
-                map.put( "log.file", String.valueOf( prop.get( "log.file")));
-                map.put( "log.level", String.valueOf( prop.get( "log.level")));
+                map.put( logDir, String.valueOf( prop.get( logDir)));
+                map.put( logFile, String.valueOf( prop.get( logFile)));
+                map.put( logLevel, String.valueOf( prop.get( logLevel)));
 
-                map.put( "log.error.file", String.valueOf( prop.get( "log.error.file")));
+                map.put( logErrorFile, String.valueOf( prop.get( logErrorFile)));
 
-                map.put( "kafka.host", String.valueOf( prop.get( "kafka.host")));
-                map.put( "kafka.port", String.valueOf( prop.get( "kafka.port")));
+                map.put( kafkaHost, String.valueOf( prop.get( kafkaHost)));
+                map.put( kafkaPort, String.valueOf( prop.get( kafkaPort)));
 
-                map.put( "zoo.host", String.valueOf( prop.get( "zoo.host")));
-                map.put( "zoo.port", String.valueOf( prop.get( "zoo.port")));
+                boolean kafkaLogDis = Boolean.parseBoolean( (String) prop.get( kafkaLogDisable));
+                map.put( kafkaLogLevel, kafkaLogDis ? "OFF" : map.get( logLevel));
 
-                map.put( "config.server.host", String.valueOf( prop.get( "config.server.host")));
-                map.put( "config.server.port", String.valueOf( prop.get( "config.server.port")));
+                map.put( zooHost, String.valueOf( prop.get( zooHost)));
+                map.put( zooPort, String.valueOf( prop.get( zooPort)));
 
-                map.put( "auth.host", String.valueOf( prop.get( "auth.host")));
-                map.put( "auth.port", String.valueOf( prop.get( "auth.port")));
-                map.put( "auth.host.authorization", String.valueOf( prop.get( "auth.host.authorization")));
+                map.put( configServerHost, String.valueOf( prop.get( configServerHost)));
+                map.put( configServerPort, String.valueOf( prop.get( configServerPort)));
 
-                map.put( "eureka.host", String.valueOf( prop.get( "eureka.host")));
-                map.put( "eureka.port", String.valueOf( prop.get( "eureka.port")));
+                map.put( authHost, String.valueOf( prop.get( authHost)));
+                map.put( authPort, String.valueOf( prop.get( authPort)));
+                map.put( authHostAuthorization, String.valueOf( prop.get( authHostAuthorization)));
+
+                map.put( eurekaHost, String.valueOf( prop.get( eurekaHost)));
+                map.put( eurekaPort, String.valueOf( prop.get( eurekaPort)));
                 /************************************************************/
 
-                System.setProperty( "log.level", map.get( "log.level"));
+                System.setProperty( logLevel, map.get( logLevel));
 
-                System.setProperty( "kafka.host", map.get( "kafka.host"));
-                System.setProperty( "kafka.port", map.get( "kafka.port"));
+                System.setProperty( kafkaHost, map.get( kafkaHost));
+                System.setProperty( kafkaPort, map.get( kafkaPort));
 
-                System.setProperty( "zoo.host", map.get( "zoo.host"));
-                System.setProperty( "zoo.port", map.get( "zoo.port"));
+                System.setProperty( zooHost, map.get( zooHost));
+                System.setProperty( zooPort, map.get( zooPort));
 
-                System.setProperty( "config.server.host", map.get( "config.server.host"));
-                System.setProperty( "config.server.port", map.get( "config.server.port"));
-                //For Spring Boot 1.5.22
-                System.setProperty( "spring.cloud.config.uri", String.format( "http://%s:%s", map.get( "config.server.host"), map.get( "config.server.port")));
+                System.setProperty( configServerHost, map.get( configServerHost));
+                System.setProperty( configServerPort, map.get( configServerPort));
+                // For Spring Boot 1.5.22
+                System.setProperty( springCloudConfigUri, String.format( "http://%s:%s", map.get( configServerHost), map.get( configServerPort)));
 
-                System.setProperty( "auth.host", map.get( "auth.host"));
-                System.setProperty( "auth.port", map.get( "auth.port"));
-                System.setProperty( "auth.host.authorization", map.get( "auth.host.authorization"));
+                System.setProperty( authHost, map.get( authHost));
+                System.setProperty( authPort, map.get( authPort));
+                System.setProperty( authHostAuthorization, map.get( authHostAuthorization));
 
-                System.setProperty( "eureka.host", map.get( "eureka.host"));
-                System.setProperty( "eureka.port", map.get( "eureka.port"));
+                System.setProperty( eurekaHost, map.get( eurekaHost));
+                System.setProperty( eurekaPort, map.get( eurekaPort));
 
                 Configurator.initialize( null, LOG4J2_XML);
                 logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
