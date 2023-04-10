@@ -2,20 +2,40 @@ export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
 export JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
 export JAVA_HOME=$JAVA_HOME_17
 
+function prop {
+    grep "${1}=" ./commons/src/main/resources/default.properties|cut -d'=' -f2
+}
+
 log_dir=logs
 log_host_dir=/mnt/c/$log_dir
 log_container_dir=/app/$log_dir
 network=oauth2
 auth=auth-server
-auth_port=9000
+auth_port=$(prop 'auth.port')
 eureka=eureka-server
-eureka_port=8762
+eureka_port=$(prop 'eureka.port')
 kafka=kafka
-kafka_port=9093
+kafka_port=$(prop 'kafka.port')
 zoo=zookeeper
-zoo_port=2182
+zoo_port=$(prop 'zoo.port')
 conf=config-server
-conf_port=8889
+conf_port=$(prop 'config.server.port')
+
+echo 'conf_port='$conf_port
+echo 'log_dir='$log_dir
+echo 'log_host_dir='$log_host_dir
+echo 'log_container_dir='$log_container_dir
+echo 'network='$network
+echo 'auth='$auth
+echo 'auth_port='$auth_port
+echo 'eureka='$eureka
+echo 'eureka_port='$eureka_port
+echo 'kafka='$kafka
+echo 'kafka_port='$kafka_port
+echo 'zoo='$zoo
+echo 'zoo_port='$zoo_port
+echo 'conf='$conf
+echo 'conf_port='$conf_port
 
 ##########################################################################################
 

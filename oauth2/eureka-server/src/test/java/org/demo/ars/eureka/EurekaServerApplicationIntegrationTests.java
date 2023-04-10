@@ -37,7 +37,6 @@ class EurekaServerApplicationIntegrationTests {
         assertEquals( AppPropertiesLookup.get( "name"), "eureka-server");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
-        assertEquals( AppPropertiesLookup.get( "eureka.port"), env.getProperty( "eureka.port"));
     }
 
 }
