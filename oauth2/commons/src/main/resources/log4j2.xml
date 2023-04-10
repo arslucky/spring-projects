@@ -5,31 +5,31 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss} %highlight{[%level]} %yellow{%C{3.}} - %msg%n" />
         </Console>
-        <RollingFile name="RollingFile" fileName="${app:log.dir}/${app:log.file}" filePattern="${app:log.dir}/archive/${app:log.file}-%d{yyyyMMdd}">
+        <RollingFile name="RollingFile" fileName="${sys:log.dir}/${sys:log.file}" filePattern="${sys:log.dir}/archive/${sys:log.file}-%d{yyyyMMdd}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${app:log.dir}/archive">
+                <Delete basePath="${sys:log.dir}/archive">
                     <IfLastModified age="P5D" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="RollingFileError" fileName="${app:log.dir}/${app:log.error.file}" filePattern="${app:log.dir}/archive/${app:log.error.file}-%d{yyyyMMdd}">
+        <RollingFile name="RollingFileError" fileName="${sys:log.dir}/${sys:log.error.file}" filePattern="${sys:log.dir}/archive/${sys:log.error.file}-%d{yyyyMMdd}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${app:log.dir}/archive">
+                <Delete basePath="${sys:log.dir}/archive">
                     <IfLastModified age="P5D" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
         <Kafka name="Kafka" topic="log">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
-            <Property name="bootstrap.servers">${app:kafka.host}:${app:kafka.port}</Property>
+            <Property name="bootstrap.servers">${sys:kafka.host}:${sys:kafka.port}</Property>
         </Kafka>
     </Appenders>
     <Loggers>
@@ -37,7 +37,7 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
             <AppenderRef ref="RollingFileError" level="WARN" />
-            <AppenderRef ref="Kafka" level="${app:kafka.log.level}"/>
+            <AppenderRef ref="Kafka" level="${sys:kafka.log.level}"/>
         </Root>
     </Loggers>
 </Configuration>

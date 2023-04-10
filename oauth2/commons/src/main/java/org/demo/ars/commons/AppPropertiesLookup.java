@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,41 +31,7 @@ import org.slf4j.event.Level;
 @Plugin( name = "app", category = "Lookup")
 public class AppPropertiesLookup implements StrLookup {
 
-    private static final String logDir = "log.dir";
-
-    private static final String logFile = "log.file";
-
-    private static final String logErrorFile = "log.error.file";
-
     private static final String logLevel = "log.level";
-
-    private static final String kafkaLogDisable = "kafka.log.disable";
-
-    private static final String kafkaHost = "kafka.host";
-
-    private static final String kafkaPort = "kafka.port";
-
-    private static final String kafkaLogLevel = "kafka.log.level";
-
-    private static final String eurekaHost = "eureka.host";
-
-    private static final String eurekaPort = "eureka.port";
-
-    private static final String authHost = "auth.host";
-
-    private static final String authPort = "auth.port";
-
-    private static final String authHostAuthorization = "auth.host.authorization";
-
-    private static final String configServerHost = "config.server.host";
-
-    private static final String configServerPort = "config.server.port";
-
-    private static final String zooHost = "zoo.host";
-
-    private static final String zooPort = "zoo.port";
-    // For Spring Boot 1.5.22
-    private static final String springCloudConfigUri = "spring.cloud.config.uri";
 
     private static final String LOG4J2_XML = "log4j2.xml";
 
@@ -72,6 +40,8 @@ public class AppPropertiesLookup implements StrLookup {
     private static boolean initialized = false;
 
     private static ReentrantLock rel = new ReentrantLock();
+
+    private static final Pattern pattern = Pattern.compile( "\\$\\{([\\w\\.]+)\\}");
 
     static {
         init();
@@ -85,60 +55,30 @@ public class AppPropertiesLookup implements StrLookup {
                 Properties prop = new Properties();
 
                 prop.putAll( PropertiesUtils.loadPropertiesFromYaml( "application"));
-                prop.putAll( PropertiesUtils.loadProperties( "default"));
                 prop.putAll( PropertiesUtils.loadProperties( "application"));
+
+                Properties defaultProperties = PropertiesUtils.loadProperties( "default");
+
+                prop.putAll( defaultProperties);
+                for( String key : defaultProperties.stringPropertyNames()) {
+                    if( System.getProperty( key) == null) { // hasn't set in the command line
+                        System.setProperty( key, defaultProperties.getProperty( key));
+                    }
+                }
                 prop.putAll( System.getProperties());
-                prop.putAll( System.getenv());
 
                 map.put( "name", String.valueOf( prop.get( "spring.application.name")));
                 map.put( "host", InetAddress.getLocalHost().getHostName());
-                map.put( "port", getValue( String.valueOf( prop.get( "server.port")), String.valueOf( prop.get( "port"))));
 
-                map.put( logDir, String.valueOf( prop.get( logDir)));
-                map.put( logFile, String.valueOf( prop.get( logFile)));
+                String port = getValue( String.valueOf( prop.get( "server.port")), prop);
+                if( port == null) {
+                    port = getValue( String.valueOf( prop.get( "port")), prop);
+                }
+                if( port != null) {
+                    map.put( "port", port);
+                }
+
                 map.put( logLevel, String.valueOf( prop.get( logLevel)));
-
-                map.put( logErrorFile, String.valueOf( prop.get( logErrorFile)));
-
-                map.put( kafkaHost, String.valueOf( prop.get( kafkaHost)));
-                map.put( kafkaPort, String.valueOf( prop.get( kafkaPort)));
-
-                boolean kafkaLogDis = Boolean.parseBoolean( (String) prop.get( kafkaLogDisable));
-                map.put( kafkaLogLevel, kafkaLogDis ? "OFF" : map.get( logLevel));
-
-                map.put( zooHost, String.valueOf( prop.get( zooHost)));
-                map.put( zooPort, String.valueOf( prop.get( zooPort)));
-
-                map.put( configServerHost, String.valueOf( prop.get( configServerHost)));
-                map.put( configServerPort, String.valueOf( prop.get( configServerPort)));
-
-                map.put( authHost, String.valueOf( prop.get( authHost)));
-                map.put( authPort, String.valueOf( prop.get( authPort)));
-                map.put( authHostAuthorization, String.valueOf( prop.get( authHostAuthorization)));
-
-                map.put( eurekaHost, String.valueOf( prop.get( eurekaHost)));
-                map.put( eurekaPort, String.valueOf( prop.get( eurekaPort)));
-                /************************************************************/
-
-                System.setProperty( logLevel, map.get( logLevel));
-
-                System.setProperty( kafkaHost, map.get( kafkaHost));
-                System.setProperty( kafkaPort, map.get( kafkaPort));
-
-                System.setProperty( zooHost, map.get( zooHost));
-                System.setProperty( zooPort, map.get( zooPort));
-
-                System.setProperty( configServerHost, map.get( configServerHost));
-                System.setProperty( configServerPort, map.get( configServerPort));
-                // For Spring Boot 1.5.22
-                System.setProperty( springCloudConfigUri, String.format( "http://%s:%s", map.get( configServerHost), map.get( configServerPort)));
-
-                System.setProperty( authHost, map.get( authHost));
-                System.setProperty( authPort, map.get( authPort));
-                System.setProperty( authHostAuthorization, map.get( authHostAuthorization));
-
-                System.setProperty( eurekaHost, map.get( eurekaHost));
-                System.setProperty( eurekaPort, map.get( eurekaPort));
 
                 Configurator.initialize( null, LOG4J2_XML);
                 logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
@@ -217,11 +157,17 @@ public class AppPropertiesLookup implements StrLookup {
         }
     }
 
-    private static String getValue( String value1, String value2) {
-        if( StringUtils.isNotBlank( value1) && !value1.trim().startsWith( "$")) {
-            return value1;
+    private static String getValue( String value, Properties prop) {
+
+        if( StringUtils.isBlank( value)) {
+            return value;
         }
-        return value2;
+        Matcher matcher = pattern.matcher( value);
+
+        if( matcher.matches()) {
+            return prop.getProperty( matcher.group( 1));
+        }
+        return value;
     }
 
 }

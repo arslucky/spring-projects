@@ -20,9 +20,9 @@ public class AppPropertiesLookupTest {
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
         assertEquals( AppPropertiesLookup.get( "port"), "null");
 
-        assertEquals( AppPropertiesLookup.get( "log.file"), "oauth2.log");
-        assertEquals( AppPropertiesLookup.get( "log.level"), "INFO");
-        assertEquals( AppPropertiesLookup.get( "log.error.file"), "oauth2_error.log");
+        assertEquals( System.getProperty( "log.file"), "oauth2.log");
+        assertEquals( System.getProperty( "log.level"), "INFO");
+        assertEquals( System.getProperty( "log.error.file"), "oauth2_error.log");
     }
 
     @Test
@@ -33,10 +33,6 @@ public class AppPropertiesLookupTest {
         assertEquals( lookup.lookup( "name"), "null");
         assertEquals( lookup.lookup( "host"), getLocalHost().getHostName());
         assertEquals( lookup.lookup( "port"), "null");
-
-        assertEquals( lookup.lookup( "log.file"), "oauth2.log");
-        assertEquals( lookup.lookup( "log.level"), "INFO");
-        assertEquals( lookup.lookup( "log.error.file"), "oauth2_error.log");
     }
 
 }

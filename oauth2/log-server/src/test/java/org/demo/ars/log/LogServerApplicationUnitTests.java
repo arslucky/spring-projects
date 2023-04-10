@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.UnknownHostException;
 
-import org.demo.ars.commons.AppPropertiesLookup;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -19,6 +18,6 @@ class LogServerApplicationUnitTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( AppPropertiesLookup.get( "log.file"), "oauth2_server.log");
+        assertEquals( System.getProperty( "kafka.log.file"), "oauth2_server.log");
     }
 }

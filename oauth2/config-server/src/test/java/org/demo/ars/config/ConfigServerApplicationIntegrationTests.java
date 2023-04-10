@@ -48,7 +48,6 @@ public class ConfigServerApplicationIntegrationTests {
         assertEquals( AppPropertiesLookup.get( "name"), "config-server");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
-        assertEquals( AppPropertiesLookup.get( "config.server.port"), env.getProperty( "config.server.port"));
 
         assertEquals( env.getProperty( "spring.cloud.config.server.git.default-label"), "main");
         assertEquals( env.getProperty( "spring.cloud.config.server.git.uri"), "https://github.com/arslucky/properties");
