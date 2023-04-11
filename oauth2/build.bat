@@ -9,7 +9,9 @@ set JAVA_HOME=%JAVA_HOME_17%
 :: bus.enable=false, switch off Bus/Kafka feature, true by default                                         :: 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-call mvn clean package install ^
+call mvn --file .\commons\pom.xml --toolchains .\toolchains.xml clean install
+
+call mvn clean package -pl !commons ^
 -Dkafka.log.level=OFF ^
 -Dgroup-tests=none ^
 -Dbus.enable=false

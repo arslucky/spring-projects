@@ -8,7 +8,10 @@ export JAVA_HOME=$JAVA_HOME_17
 # bus.enable=false, switch off Bus/Kafka feature, true by default                                         ## 
 ############################################################################################################
 
-mvn clean install \
+mvn --file ./commons/pom.xml --toolchains ./toolchains.xml clean install \
+-Dlog.dir=/mnt/c/logs
+
+mvn clean package -pl !commons \
 -Dlog.dir=/mnt/c/logs \
 -Dkafka.log.level=OFF \
 -Dgroup-tests=none \
