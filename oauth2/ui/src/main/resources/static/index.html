@@ -81,7 +81,7 @@
             }
         });
     };
-    function getInstanceId(requestUrl, requestType, objectId) {
+    function getService(requestUrl, requestType, objectId, isJson) {
         getToken();
         $.ajax({
             url : requestUrl,
@@ -90,6 +90,9 @@
                 authorization(xhr, settings)
             },
             success : function(res) {
+                if (isJson) {
+                    res = JSON.stringify(res);
+                }
                 $(objectId).html(res);
             },
             error : function(request, textStatus, errorThrown) {
@@ -150,11 +153,11 @@
     <br>
     <table>
         <tr class="container user" style="display: none">
-            <td><a href="javascript:getInstanceId('/ui/getInstanceId', 'GET', '#uiId');">UI ID:</a></td>
+            <td><a href="javascript:getService('/ui/getInstanceId', 'GET', '#uiId', false);">UI ID:</a></td>
             <td><span id="uiId"></span></td>
         </tr>
         <tr class="container user" style="display: none">
-            <td><a href="javascript:getInstanceId('/resource/getInstanceId', 'GET', '#resourceId');">Resource ID:</a></td>
+            <td><a href="javascript:getService('/resource/getInstanceId', 'GET', '#resourceId', false);">Resource ID:</a></td>
             <td><span id="resourceId"></span></td>
         </tr>
         <tr class="container user" style="display: none">
@@ -164,6 +167,18 @@
         <tr class="container user admin" style="display: none">
             <td><a href="javascript:getStatistic();">Statistic:</a></td>
             <td><span id="statistic"></span></td>
+        </tr>
+        <tr class="container admin" style="display: none">
+            <td><a href="javascript:getService('/customer/getCustomer/12345', 'GET', '#customerId', true);">Customer:</a></td>
+            <td><span id="customerId"></span></td>
+        </tr>
+        <tr class="container admin" style="display: none">
+            <td><a href="javascript:getService('/customer/getAccount/12345', 'GET', '#accountId', true);">Account:</a></td>
+            <td><span id="accountId"></span></td>
+        </tr>
+        <tr class="container user admin" style="display: none">
+            <td><a href="javascript:getService('/order/getOrder/12345', 'GET', '#orderId', true);">Order:</a></td>
+            <td><span id="orderId"></span></td>
         </tr>
     </table>
 </body>

@@ -74,6 +74,12 @@ zuul:
       path: /resource/**
       service-id: resource
       sensitiveHeaders:
+    customer:
+      path: /customer/**
+      service-id: customer-service
+    order:
+      path: /order/**
+      service-id: order-service  
 security:
 #  sessions: stateless
   user:

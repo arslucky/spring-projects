@@ -1,0 +1,82 @@
+server:
+  port: ${port}
+spring:
+  application:
+    name: customer-service
+  profiles:
+    active:
+    - dev
+  kafka:
+    bootstrap-servers:
+        - ${kafka.host}:${kafka.port}
+  config:
+    import: 
+      - optional:configserver:http://${config.server.host}:${config.server.port} 
+  cloud:
+    config:
+      name: oauth2  
+    bus:
+      enabled: ${bus.enable:true}
+    stream:
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka
+    healthcheck:
+      enabled: true
+  instance:
+    hostname: ${eureka.instance.hostname}
+    instance-id: ${spring.application.name}:${random.int}
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+        - health
+        - info
+        - refresh
+        - busrefresh
+        - busenv
+  endpoint:
+    health:
+      show-details: always
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - test
+  jpa:
+    database: h2
+    show-sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
+---    
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+  jpa:
+    database: mysql
+    show-sql: true
+    generate-ddl: false
+  datasource:
+    url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.db}
+    username: ${mysql.user.name}
+    password: ${mysql.user.password}

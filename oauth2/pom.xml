@@ -15,5 +15,7 @@
     <module>gateway-zuul</module>
     <module>log-server</module>
     <module>config-server</module>
+    <module>customer-service</module>
+    <module>order-service</module>
   </modules>
 </project>

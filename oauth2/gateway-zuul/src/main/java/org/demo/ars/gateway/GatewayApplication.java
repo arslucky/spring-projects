@@ -6,11 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.demo.ars.gateway.config.RibbonConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@RibbonClients( defaultConfiguration = RibbonConfiguration.class)
+// @RibbonClients( defaultConfiguration = RibbonConfiguration.class)
 @EnableDiscoveryClient
 @EnableZuulProxy
 @SpringBootApplication( scanBasePackages = { "org.demo.ars.gateway", "org.demo.ars.commons" })

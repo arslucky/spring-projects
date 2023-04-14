@@ -20,6 +20,14 @@ zoo=zookeeper
 zoo_port=$(prop 'zoo.port')
 conf=config-server
 conf_port=$(prop 'config.server.port')
+MYSQL=mysql
+MYSQL_PORT=$(prop 'mysql.port')
+MYSQL_USER=root
+MYSQL_PASSWORD=password
+MYSQL_DB=customer
+MONGO=mongo
+MONGO_PORT=$(prop 'mongo.port')
+MONGO_ROOT_PASSWORD=password
 
 echo 'conf_port='$conf_port
 echo 'log_dir='$log_dir
@@ -36,6 +44,14 @@ echo 'zoo='$zoo
 echo 'zoo_port='$zoo_port
 echo 'conf='$conf
 echo 'conf_port='$conf_port
+echo 'MYSQL='$MYSQL
+echo 'MYSQL_PORT='$MYSQL_PORT
+echo 'MYSQL_USER='$MYSQL_USER
+echo 'MYSQL_PASSWORD='$MYSQL_PASSWORD
+echo 'MYSQL_DB='$MYSQL_DB
+echo 'MONGO='$MONGO
+echo 'MONGO_PORT='$MONGO_PORT
+echo 'MONGO_ROOT_PASSWORD='$MONGO_ROOT_PASSWORD
 
 ##########################################################################################
 
@@ -56,9 +72,43 @@ docker run -dp $kafka_port:$kafka_port --network $network --network-alias $kafka
     -e KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:$kafka_port \
     bitnami/kafka:3.3.2
 
-echo "creating log topic"
+echo "creating topic log"
 
 docker exec -it $kafka /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic log --bootstrap-server $kafka:$kafka_port
+
+##########################################################################################
+
+docker rm -f $MYSQL
+docker run -dp $MYSQL_PORT:$MYSQL_PORT --network $network --network-alias $MYSQL --hostname $MYSQL --name $MYSQL \
+    -e MYSQL_TCP_PORT=$MYSQL_PORT \
+    -e MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD \
+    mysql:8.0.32
+
+until docker exec -i $MYSQL sh -c 'exec mysql -u'$MYSQL_USER' -p'$MYSQL_PASSWORD' --port='$MYSQL_PORT' -e "select 1 from dual"'
+do
+  echo "Waiting for database connection..."
+  # wait for 5 seconds before check again
+  sleep 10
+done
+    
+docker exec -i $MYSQL sh -c 'exec mysql -u'$MYSQL_USER' -p'$MYSQL_PASSWORD' --port='$MYSQL_PORT < ./customer-service/dev-database.sql
+
+##########################################################################################
+
+docker rm -f $MONGO
+docker run -dp $MONGO_PORT:$MONGO_PORT --network $network --network-alias $MONGO --hostname $MONGO --name $MONGO \
+    -e MONGODB_ROOT_PASSWORD=$MONGO_ROOT_PASSWORD \
+    -e MONGODB_PORT_NUMBER=$MONGO_PORT \
+    bitnami/mongodb:6.0.5
+
+docker cp ./order-service/connect-and-insert-dev.js $MONGO:/connect-and-insert-dev.js
+
+until docker exec -it $MONGO mongosh 'mongodb://'$MONGO':'$MONGO_PORT --username root --password $MONGO_ROOT_PASSWORD -f /connect-and-insert-dev.js
+do
+  echo "Waiting for mongo database connection..."
+  # wait for 5 seconds before check again
+  sleep 5
+done
 
 ##########################################################################################
 
@@ -213,4 +263,82 @@ docker run -d --network $network --name $res2 --network-alias $res2 \
     -e zoo.port=$zoo_port \
     -e config.server.host=$conf \
     -e config.server.port=$conf_port \
-    resource    
+    resource
+
+##########################################################################################
+cust1=customer-service1
+cust2=customer-service2
+
+docker rm -f $cust1
+docker rm -f $cust2
+docker rmi -f customer-service
+docker build -t customer-service ./customer-service
+
+docker run -d --network $network --name $cust1 --network-alias $cust1 \
+    -v $log_host_dir:$log_container_dir \
+    -e log.dir=$log_dir \
+    -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
+    -e eureka.instance.hostname=$cust1 \
+    -e kafka.host=$kafka \
+    -e kafka.port=$kafka_port \
+    -e zoo.host=$zoo \
+    -e zoo.port=$zoo_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    -e mysql.host=$MYSQL \
+    -e mysql.port=$MYSQL_PORT \
+    -e mysql.db=$MYSQL_DB \
+    customer-service
+
+docker run -d --network $network --name $cust2 --network-alias $cust2 \
+    -v $log_host_dir:$log_container_dir \
+    -e log.dir=$log_dir \
+    -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
+    -e eureka.instance.hostname=$cust2 \
+    -e kafka.host=$kafka \
+    -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    -e mysql.host=$MYSQL \
+    -e mysql.port=$MYSQL_PORT \
+    -e mysql.db=$MYSQL_DB \
+    customer-service
+
+##########################################################################################
+ord1=order-service1
+ord2=order-service2
+
+docker rm -f $ord1
+docker rm -f $ord2
+docker rmi -f order-service
+docker build -t order-service ./order-service
+
+docker run -d --network $network --name $ord1 --network-alias $ord1 \
+    -v $log_host_dir:$log_container_dir \
+    -e log.dir=$log_dir \
+    -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
+    -e eureka.instance.hostname=$ord1 \
+    -e kafka.host=$kafka \
+    -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    -e mongo.host=$MONGO \
+    -e mongo.port=$MONGO_PORT \
+    order-service
+
+docker run -d --network $network --name $ord2 --network-alias $ord2 \
+    -v $log_host_dir:$log_container_dir \
+    -e log.dir=$log_dir \
+    -e eureka.host=$eureka \
+    -e eureka.port=$eureka_port \
+    -e eureka.instance.hostname=$ord2 \
+    -e kafka.host=$kafka \
+    -e kafka.port=$kafka_port \
+    -e config.server.host=$conf \
+    -e config.server.port=$conf_port \
+    -e mongo.host=$MONGO \
+    -e mongo.port=$MONGO_PORT \
+    order-service

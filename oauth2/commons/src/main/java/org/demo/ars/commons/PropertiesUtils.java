@@ -41,7 +41,8 @@ public class PropertiesUtils {
             return properties;
         }
 
-        properties.putAll( getFlattenedMap( yaml.load( res)));
+        Iterable<Object> it = yaml.loadAll( res);
+        properties.putAll( getFlattenedMap( (Map<String, Object>) it.iterator().next()));
 
         return properties;
     }

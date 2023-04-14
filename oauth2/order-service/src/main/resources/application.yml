@@ -1,0 +1,74 @@
+server:
+  port: ${port}
+spring:
+  application:
+    name: order-service
+  profiles:
+    active:
+    - dev
+  kafka:
+    bootstrap-servers:
+        - ${kafka.host}:${kafka.port}
+  config:
+    import: 
+      - optional:configserver:http://${config.server.host}:${config.server.port} 
+  cloud:
+    config:
+      name: oauth2  
+    bus:
+      enabled: ${bus.enable:true}
+    stream:
+      bindings:
+        springCloudBusOutput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+        springCloudBusInput:
+          content-type: application/json
+          producer:
+            header-mode: none
+          consumer:
+            header-mode: none
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${eureka.host}:${eureka.port}/eureka
+    healthcheck:
+      enabled: true
+  instance:
+    hostname: ${eureka.instance.hostname}
+    instance-id: ${spring.application.name}:${random.int}
+management:
+  endpoint:
+    info:
+      enabled: true      
+    health:
+      enabled: true
+    refresh:
+      enabled: true
+    busenv:
+      enabled: true
+    busrefresh:
+      enabled: true  
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - test
+  data:
+    mongodb:
+      uri: mongodb://userTest:password@${mongo.host}:${mongo.port}/test
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+  data:
+    mongodb:
+      uri: mongodb://userDev:password@${mongo.host}:${mongo.port}/dev 
