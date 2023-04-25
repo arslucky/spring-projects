@@ -19,10 +19,8 @@ public class AppPropertiesLookupTest {
         assertEquals( AppPropertiesLookup.get( "name"), "null");
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
         assertEquals( AppPropertiesLookup.get( "port"), "null");
-
-        assertEquals( System.getProperty( "log.file"), "oauth2.log");
-        assertEquals( System.getProperty( "log.level"), "INFO");
-        assertEquals( System.getProperty( "log.error.file"), "oauth2_error.log");
+        
+        assertEquals( System.getProperty( "LOG_LEVEL"), "INFO");
     }
 
     @Test

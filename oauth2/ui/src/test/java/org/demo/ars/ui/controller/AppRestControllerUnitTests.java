@@ -27,7 +27,7 @@ public class AppRestControllerUnitTests {
 
     @Before
     public void setup() {
-        mockEnvironment.setProperty( "log.level", "INFO");
+        mockEnvironment.setProperty( "LOG_LEVEL", "INFO");
         this.mockMvc = MockMvcBuilders.standaloneSetup( new AppRestController( mockEnvironment)).build();
     }
 

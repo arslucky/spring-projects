@@ -1,11 +1,11 @@
 server:
-  port: ${config.server.port}  
+  port: ${CONFIG_SERVER_PORT}  
 spring:
   application:
     name: config-server
   kafka:
     bootstrap-servers:
-    - ${kafka.host}:${kafka.port}
+    - ${KAFKA_HOST}:${KAFKA_PORT}
     consumer:
       client-id: ${spring.application.name}
   cloud:
@@ -17,7 +17,7 @@ spring:
           uri: https://github.com/arslucky/properties
           refresh-rate: 30
     bus:
-      enabled: ${bus.enable:true}
+      enabled: ${BUS_ENABLE:true}
     stream:
       bindings:
         springCloudBusOutput:

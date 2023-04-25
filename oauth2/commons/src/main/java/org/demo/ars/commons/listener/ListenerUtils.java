@@ -16,12 +16,13 @@ public class ListenerUtils {
     private static Logger log = LoggerFactory.getLogger( ListenerUtils.class);
 
     static void updateLogLevel( Environment env, String caller) {
-        String key = "log.level";
+        String key = "LOG_LEVEL";
 
         String currentLevel = AppPropertiesLookup.get( key);
         String newLevel = env.getProperty( key);
 
-        if( isNotBlank( newLevel) && !currentLevel.equalsIgnoreCase( newLevel)) {
+        if( isNotBlank( newLevel) && isNotBlank( currentLevel) && !currentLevel.equalsIgnoreCase( newLevel)) {
+
             log.info( String.format( "Updating log level from %s to %s by %s", currentLevel, newLevel, caller));
             AppPropertiesLookup.setValue( key, newLevel);
             AppPropertiesLookup.reInitLogger();

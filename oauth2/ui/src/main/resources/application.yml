@@ -5,18 +5,18 @@ spring:
     name: ui
   kafka:
     bootstrap-servers:
-      - ${kafka.host}:${kafka.port}
+      - ${KAFKA_HOST}:${KAFKA_PORT}
   cloud:
     config:
       name: oauth2
 #      uri: http://${config.server.host}:${config.server.port} has to be set exactly as -Dspring.cloud.config.uri=<value>  
     bus:
-      enabled: ${bus.enable:true}
+      enabled: ${BUS_ENABLE:true}
     stream:
       kafka:
         binder:
-          zkNodes: ${zoo.host}
-          defaultZkPort: ${zoo.port}    
+          zkNodes: ${ZOO_HOST}
+          defaultZkPort: ${ZOO_PORT}    
       bindings:
         springCloudBusOutput:
           content-type: application/json
@@ -35,11 +35,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka.host}:${eureka.port}/eureka
+      defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka
     healthcheck:
       enabled: true
   instance:
-    hostname: ${eureka.instance.hostname}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME}
     instance-id: ${spring.application.name}:${random.int}
 #    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
@@ -54,4 +54,4 @@ security:
     enabled: false
   oauth2:
     resource:
-      user-info-uri: http://${auth.host}:${auth.port}/uaa/user
+      user-info-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/user

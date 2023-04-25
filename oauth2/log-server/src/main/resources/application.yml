@@ -3,15 +3,15 @@ spring:
     name: log-server
   kafka:
     bootstrap-servers:
-      - ${kafka.host}:${kafka.port}
+      - ${KAFKA_HOST}:${KAFKA_PORT}
   config:
     import: 
-      - optional:configserver:http://${config.server.host}:${config.server.port} 
+      - optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT} 
   cloud:
     config:
       name: oauth2  
     bus:
-      enabled: ${bus.enable:true}
+      enabled: ${BUS_ENABLE:true}
     stream:
       bindings:
         springCloudBusOutput:

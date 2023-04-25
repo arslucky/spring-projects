@@ -177,7 +177,7 @@ public class ResourceApplicationMicroserviceTest {
         }
         HttpEntity<Object> entity = new HttpEntity<>( body, headers);
 
-        String url = String.format( "http://%s:%s/uaa/oauth/token", System.getProperty( "auth.host"), System.getProperty( "auth.port"));
+        String url = String.format( "http://%s:%s/uaa/oauth/token", System.getProperty( "AUTH_HOST"), System.getProperty( "AUTH_PORT"));
         ResponseEntity<String> response = template.postForEntity( url, entity, String.class);
 
         assertEquals( HttpStatus.OK, response.getStatusCode());

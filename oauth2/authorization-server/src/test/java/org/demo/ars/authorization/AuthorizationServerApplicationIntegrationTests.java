@@ -54,7 +54,7 @@ public class AuthorizationServerApplicationIntegrationTests {
         assertEquals( AppPropertiesLookup.get( "name"), "authorization-server");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
-        assertEquals( AppPropertiesLookup.get( "port"), env.getProperty( "auth.port"));
+        assertEquals( AppPropertiesLookup.get( "port"), env.getProperty( "AUTH_PORT"));
     }
 
     @Test

@@ -1,6 +1,4 @@
-drop database if exists customer;
-
-create database if not exists customer;
+create database customer;
 
 create user if not exists userDev;
 

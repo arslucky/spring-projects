@@ -43,6 +43,6 @@ public class AppRestController {
 
     @RequestMapping( path = "/getLogLevel", method = { RequestMethod.GET, RequestMethod.POST })
     String getLogLevel() {
-        return env.getProperty( "log.level");
+        return env.getProperty( "LOG_LEVEL");
     }
 }

@@ -8,15 +8,15 @@ spring:
     - dev
   kafka:
     bootstrap-servers:
-        - ${kafka.host}:${kafka.port}
+        - ${KAFKA_HOST}:${KAFKA_PORT}
   config:
     import: 
-      - optional:configserver:http://${config.server.host}:${config.server.port} 
+      - optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT} 
   cloud:
     config:
       name: oauth2  
     bus:
-      enabled: ${bus.enable:true}
+      enabled: ${BUS_ENABLE:true}
     stream:
       bindings:
         springCloudBusOutput:
@@ -36,11 +36,11 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://${eureka.host}:${eureka.port}/eureka
+      defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka
     healthcheck:
       enabled: true
   instance:
-    hostname: ${eureka.instance.hostname}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME}
     instance-id: ${spring.application.name}:${random.int}
 management:
   endpoint:
@@ -62,7 +62,7 @@ spring:
       - test
   data:
     mongodb:
-      uri: mongodb://userTest:password@${mongo.host}:${mongo.port}/test
+      uri: mongodb://userTest:password@${MONGO_HOST}:${MONGO_PORT}/test
 ---
 spring:
   config:
@@ -71,4 +71,4 @@ spring:
       - dev
   data:
     mongodb:
-      uri: mongodb://userDev:password@${mongo.host}:${mongo.port}/dev 
+      uri: mongodb://${MONGO_USER}:${MONGO_USER_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB} 

@@ -1,23 +1,23 @@
 server:
-  port: ${auth.port}
+  port: ${AUTH_PORT}
   context-path: /uaa
 spring:
   application:
     name: authorization-server
   kafka:
     bootstrap-servers:
-      - ${kafka.host}:${kafka.port}    
+      - ${KAFKA_HOST}:${KAFKA_PORT}    
   cloud:
     config:
       name: oauth2
 #      uri: http://${config.server.host}:${config.server.port} has to be set exactly as -Dspring.cloud.config.uri=<value>
     bus:
-      enabled: ${bus.enable:true}
+      enabled: ${BUS_ENABLE:true}
     stream:
       kafka:
         binder:
-          zkNodes: ${zoo.host}
-          defaultZkPort: ${zoo.port}
+          zkNodes: ${ZOO_HOST}
+          defaultZkPort: ${ZOO_PORT}
       bindings:
         springCloudBusOutput:
           content-type: application/json
@@ -36,7 +36,7 @@ security:
     password: none
   oauth2:
     resource:
-      user-info-uri: http://${auth.host}:${auth.port}/uaa/user
+      user-info-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/user
 management:
   health:
     defaults:

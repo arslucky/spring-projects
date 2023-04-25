@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
@@ -28,7 +29,7 @@ import org.slf4j.event.Level;
 @Plugin( name = "app", category = "Lookup")
 public class AppPropertiesLookup implements StrLookup {
 
-    private static final String logLevel = "log.level";
+    private static final String logLevel = "LOG_LEVEL";
 
     private static final String LOG4J2_XML = "log4j2.xml";
 
@@ -56,8 +57,11 @@ public class AppPropertiesLookup implements StrLookup {
 
                 Properties defaultProperties = PropertiesUtils.loadProperties( "default");
                 prop.putAll( defaultProperties);
+
                 int i = 0;
-                for( String key : defaultProperties.stringPropertyNames()) {
+                TreeSet<String> sortedKeys = new TreeSet<>( defaultProperties.stringPropertyNames());
+
+                for( String key : sortedKeys) {
                     if( System.getenv( key) != null) {
                         log( Level.INFO, String.format( "%s %s=%s", i++, key, System.getenv( key)));
                         System.setProperty( key, System.getenv( key));

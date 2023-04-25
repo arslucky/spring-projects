@@ -18,6 +18,6 @@ class LogServerApplicationUnitTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( System.getProperty( "kafka.log.file"), "oauth2_server.log");
+        assertEquals( System.getProperty( "KAFKA_LOG_FILE"), "oauth2_server.log");
     }
 }

@@ -18,7 +18,7 @@ public class LogServerApplication {
 
     private static Logger log = LoggerFactory.getLogger( LogServerApplication.class);
 
-    private static final String topic = "log";
+    private static final String topic = "log"; // TODO: replace
 
     public static void main( String[] args) {
         SpringApplication.run( LogServerApplication.class, args);
