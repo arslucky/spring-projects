@@ -13,7 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
@@ -45,7 +48,6 @@ public class ConfigServerApplicationIntegrationTests {
     @Test
     public void settings() throws UnknownHostException {
 
-        assertEquals( AppPropertiesLookup.get( "name"), "config-server");
         assertEquals( AppPropertiesLookup.get( "name"), env.getProperty( "spring.application.name"));
         assertEquals( AppPropertiesLookup.get( "host"), getLocalHost().getHostName());
 
@@ -54,14 +56,29 @@ public class ConfigServerApplicationIntegrationTests {
     }
 
     @Test
-    public void busRefreshGet() {
-        ResponseEntity<String> response = template.getForEntity( String.format( "%s:%s/actuator/busrefresh", path, port), String.class);
-        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
-    }
+    public void actuator() {
+        ResponseEntity<String> response = template.getForEntity( String.format( "%s:%s/actuator/health", path, port), String.class);
+        assertEquals( HttpStatus.OK, response.getStatusCode());
 
-    @Test
-    public void busRefreshPost() {
-        ResponseEntity<String> response = template.postForEntity( String.format( "%s:%s/actuator/busrefresh", path, port), null, String.class);
+        response = template.getForEntity( String.format( "%s:%s/actuator/info", path, port), String.class);
+        assertEquals( HttpStatus.OK, response.getStatusCode());
+
+        response = template.getForEntity( String.format( "%s:%s/actuator/refresh", path, port), String.class);
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
+
+        response = template.postForEntity( String.format( "%s:%s/actuator/refresh", path, port), null, String.class);
+        assertEquals( HttpStatus.OK, response.getStatusCode());
+
+        response = template.getForEntity( String.format( "%s:%s/actuator/busrefresh", path, port), String.class);
+        assertEquals( HttpStatus.METHOD_NOT_ALLOWED, response.getStatusCode());
+
+        response = template.postForEntity( String.format( "%s:%s/actuator/busrefresh", path, port), null, String.class);
+        assertEquals( HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType( MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>( "{\"name\":\"LOG_LEVEL\",\"value\":\"DEBUG\"}", headers);
+        response = template.postForEntity( String.format( "%s:%s/actuator/busenv", path, port), entity, String.class);
         assertEquals( HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 }

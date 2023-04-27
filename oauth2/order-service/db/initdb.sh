@@ -14,4 +14,4 @@ do
   i=`expr $i + 1`
 done
 
-mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./connect-and-insert-dev.js
+mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./dev-database.js

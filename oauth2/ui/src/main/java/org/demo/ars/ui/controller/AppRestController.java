@@ -19,7 +19,7 @@ import com.netflix.appinfo.ApplicationInfoManager;
  */
 @RestController
 public class AppRestController {
-    Logger logger = LoggerFactory.getLogger( getClass());
+    Logger log = LoggerFactory.getLogger( getClass());
 
     @Autowired
     private ApplicationInfoManager applicationInfoManager;
@@ -32,17 +32,20 @@ public class AppRestController {
 
     @RequestMapping( path = "/getDate", method = { RequestMethod.GET, RequestMethod.POST })
     String getDate() {
+        log.info( "getDate");
         return Calendar.getInstance().getTime().toString();
     }
 
     @GetMapping( path = "/getInstanceId")
     String getInstanceId() {
+        log.info( "getInstanceId");
         String instId = applicationInfoManager.getInfo().getId();
         return instId;
     }
 
     @RequestMapping( path = "/getLogLevel", method = { RequestMethod.GET, RequestMethod.POST })
     String getLogLevel() {
+        log.info( "getLogLevel");
         return env.getProperty( "LOG_LEVEL");
     }
 }
