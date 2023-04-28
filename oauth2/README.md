@@ -26,10 +26,10 @@ Properties can be overridden in command line.
 ## Build
 ### Linux
 Run [build.sh](build.sh)
-Set correct *JAVA_HOME_8, JAVA_HOME_17* paths into the script before running
+Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 ### Windows
 Run [build.bat](build.bat)
-Set correct *JAVA_HOME_8, JAVA_HOME_17* paths into the script before running
+Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 ## Maven
 Use Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
 Each module contains [maven.config](commons/.mvn/maven.config) which refers to the parent [toolchains.xml](toolchains.xml) configuration file with multiple java versions 
@@ -40,10 +40,10 @@ Applications can be run by multiple ways
     - General
         - [docker-env.sh](docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
         - add host mapping
-            ``` 
+            ```sh 
             127.0.0.1 kafka
             ```
-            Linux - /etc/hosts
+            Linux - /etc/hosts<br>
             Windows - C:\Windows\System32\drivers\etc\hosts
     - CLI
         [docker-build.sh](docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
@@ -52,42 +52,62 @@ Applications can be run by multiple ways
          
         [docker-compose.sh](docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
     - Initialize data<br>
-        Kafka topic, MySQL, MongoDB data initialization **is run at first Docker containers running.** Scripts are involved to the build process by default
+        Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
         - Kafka
-            ```
+            ```sh
             ./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
             ```
         - MySQL
-        *[dev-database.sql](/customer-service/db/dev-database.sql)*
+        *[dev-database.sql](customer-service/db/dev-database.sql)*
         - MongoDB
-        *[dev-database.js](/order-service/db/dev-database.js)*        
+        *[dev-database.js](order-service/db/dev-database.js)*        
 1. Standalone<br>
     Note: Zookeeper, Kafka, MySQL, MongoDB have to be up.
     - Initialization
         - create [Kafka topic](https://kafka.apache.org/quickstart)
-        *./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT*
+        ```sh
+        kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
+        ```
         - init MySQL
-        *mysql -u$MYSQL_ROOT -p$MYSQL_ROOT_PASSWORD --host=$MYSQL_HOST --port=$MYSQL_PORT < [dev-database.sql](/customer-service/db/dev-database.sql)*
+        ```sh
+        mysql -u$MYSQL_ROOT -p$MYSQL_ROOT_PASSWORD --host=$MYSQL_HOST --port=$MYSQL_PORT < ./customer-service/db/dev-database.sql
+        ```
         - init MongoDB
-        *mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f [dev-database.js](/order-service/db/dev-database.js)*
-    - Linux
-        [start.sh](start.sh) - Up modules/applications
-    - Windows
-        [start.bat](start.bat) - Up modules/applications
-
-    Note: Set correct JAVA_HOME_8, JAVA_HOME_17 paths into the script before running
+        ```sh
+        mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./order-service/db/dev-database.js
+        ```
+    - Linux, [start.sh](start.sh) - Up modules/applications
+        ```sh
+        ./start.sh
+        ```
+    - Windows, [start.bat](start.bat) - Up modules/applications
+        ```sh
+        start.bat
+        ```
+        Note: Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 1. IDE<br>
-Run by default any module/application, no extra efforts. To achieve that all common application settings were put to default [properties](commons/src/main/resources/default.properties) and build as a library
+Run by default any module/application, no extra efforts. To achieve that all common application settings were put to 
+default [properties](commons/src/main/resources/default.properties) and build as a library
 
 ## Stop project
 - Docker UI, stop container by Docker UI
-- Docker CLI, stop container by [Docker CLI](https://docs.docker.com/engine/reference/commandline/stop/)
-    for instance *docker stop ui*
-- Docker Compose, stop container(s) by [Docker Compose CLI](https://docs.docker.com/engine/reference/commandline/compose_stop/)
-    *docker compose stop*
+- Docker CLI, stop container by [Docker CLI](https://docs.docker.com/engine/reference/commandline/stop/), for instance<br>
+    ```sh
+    docker stop ui
+    ```
+- Docker Compose, stop container(s) by [Docker Compose CLI](https://docs.docker.com/engine/reference/commandline/compose_stop/)<br>
+    ```sh
+    docker compose stop
+    ```
 - Standalone
-    Linux - [stop.sh](stop.sh), kill process in the reverse starting order, with default 7 signal
+    Linux - [stop.sh](stop.sh), kill process in the reverse starting order, with default 7 signal<br>
+    ```sh
+    ./stop.sh
+    ```
     Windows - [stop.bat](stop.bat) kill process in the reverse starting order
+    ```sh
+    stop.bat
+    ```
 
 ## Ports
 Non default ports are used in this project. This allowed to find narrow places in the configurable settings.  
@@ -112,11 +132,11 @@ Non default ports are used in this project. This allowed to find narrow places i
 |MongoDB|27018|MONGO_PORT|
 
 ## UI
-http://localhost:8080 the main entry point. Forward to authentication page if user has not loggined.
+The http://localhost:8080 the main entry point. Forward to authentication page if user has not loggined.
 
 User / password:
-- user / password - User role
-- admin / password - Admin role
+- *user / password* - User role
+- *admin / password* - Admin role
  
 |UI element|HTTP Request|Role|Description|
 |-|-|-|-|
@@ -126,9 +146,9 @@ User / password:
 |Resource ID|GET|USER, ADMIN|Display [resource](resource) service instance id registered in [eureka-server](eureka-server). By default run 2 instances. Each click returns one of them based on Ribbon load balancer schema|
 |Date|POST|USER, ADMIN|Display data returned by [ui](ui) service|
 |Statistic|POST|ADMIN|Display 'Statistic' raw text returned from [resource](resource)|
-|Customer|GET|ADMIN|Display customer details in JSON format returned from [customer-service](customer-service). Data filled by *[dev-database.sql](/customer-service/db/dev-database.sql)*|
-|Account|GET|ADMIN|Display account details in JSON format returned from [customer-service](customer-service). Data filled by *[dev-database.sql](/customer-service/db/dev-database.sql)*|
-|Order|GET|ADMIN|Display order details in JSON format returned from [order-service](order-service). Data filled by *[dev-database.js](/order-service/db/dev-database.js)*|
+|Customer|GET|ADMIN|Display customer details in JSON format returned from [customer-service](customer-service). Data filled by *[dev-database.sql](customer-service/db/dev-database.sql)*|
+|Account|GET|ADMIN|Display account details in JSON format returned from [customer-service](customer-service). Data filled by *[dev-database.sql](customer-service/db/dev-database.sql)*|
+|Order|GET|ADMIN|Display order details in JSON format returned from [order-service](order-service). Data filled by *[dev-database.js](order-service/db/dev-database.js)*|
 
 ### Security
 [gateway-zuul](gateway-zuul) stores Bearer token in the Security context. Token is got from [authorization-server](authorization-server).
@@ -137,16 +157,27 @@ User / password:
 
 ## Bus
 Bus pipeline is built on Kafka broker, each module connects to it. Log level is stored in the GitHub repository [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties)
-*LOG_LEVEL=INFO* default value. There is two ways to change logging level in application
+`LOG_LEVEL=INFO` default value. There is two ways to change logging level in application
 1. update setting in [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties)|, commit changes
-1. post *curl -H 'Content-Type: application/json' -d '{"name":"LOG_LEVEL","value":"DEBUG"}' http://localhost:8889/actuator/busenv* HTTP request
+1. post HTTP request 
+```sh
+curl -H 'Content-Type: application/json' -d '{"name":"LOG_LEVEL","value":"DEBUG"}' http://localhost:8889/actuator/busenv
+``` 
 than put refresh scope request to bus pipeline
-- all applications *curl -X POST http://localhost:8889/actuator/busrefresh*
-- specified [application](https://docs.spring.io/spring-cloud-bus/docs/3.1.2/reference/html/#addressing-an-instance) *curl -X POST http://localhost:8889/actuator/busrefresh/ui*
+- all applications
+```sh 
+curl -X POST http://localhost:8889/actuator/busrefresh
+```
+- specified [application](https://docs.spring.io/spring-cloud-bus/docs/3.1.2/reference/html/#addressing-an-instance) 
+```sh
+curl -X POST http://localhost:8889/actuator/busrefresh/ui
+```
 
 Listeners:
-- [RefreshScopeRefresheListener](commons/listener/RefreshScopeRefresheListener.java) listens Refresh event and reconfigure [log4j2](https://logging.apache.org/log4j/) on fly if log level is changed 
-- [ContextRefreshedListener](commons/listener/ContextRefreshedListener.java) listener does the same thing at starting or reloading Spring application context, for instance if log level does not match to *INFO* default level  
+- [RefreshScopeRefresheListener](commons/listener/RefreshScopeRefresheListener.java) listens Refresh event and reconfigure [log4j2](https://logging.apache.org/log4j/) on fly 
+if log level is changed 
+- [ContextRefreshedListener](commons/listener/ContextRefreshedListener.java) listener does the same thing at starting or reloading Spring application context, 
+for instance if log level does not match to `INFO` default level  
 
 Note: GitHub WebHook will be implemented after publishing project
 
@@ -162,26 +193,28 @@ Maven snippet in the each module
 </dependency>
 ```
 To make visible any changes in the [commons](commons) module in whole project install library to the local maven repository
-```
+```sh
 mvn clean install
 ```
 [log4j2.xml](commons/src/main/resources/log4j2.xml) appenders:
 1. Console, output to the STDOUT pipeline
-1. RollingFile, *INFO* log level by default, output to *oauth2.log* file. File name [LOG_FILE](commons/src/main/resources/default.properties) variable, is overridden in command line. 
-1. RollingFile, *WARN* log level by default, output to *oauth2_error.log* file. File name [LOG_ERROR_FILE](commons/src/main/resources/default.properties) variable, is overridden in command line.
-1. Kafka, output the the Kafka broker, *log* topic. [log-server](log-server) reads this topic and output messages to *oauth2_server.log* file. File name [KAFKA_LOG_FILE](commons/src/main/resources/default.properties) variable, is overridden in command line.
+1. RollingFile, `INFO` log level by default, output to `oauth2.log` file. File name [LOG_FILE](commons/src/main/resources/default.properties) variable, is overridden in command line. 
+1. RollingFile, `WARN` log level by default, output to `oauth2_error.log` file. File name [LOG_ERROR_FILE](commons/src/main/resources/default.properties) variable, 
+is overridden in command line.
+1. Kafka, output the the Kafka broker, `log` topic. [log-server](log-server) reads this topic and output messages to `oauth2_server.log` file. 
+File name [KAFKA_LOG_FILE](commons/src/main/resources/default.properties) variable, is overridden in command line.
 
 ### Log directory
 By default all modules writes logs to the same files locate in a shared directory
-- Linux, *[LOG_DIR=/mnt/c//logs](commons/src/main/resources/default.properties)*
-- WIndows, *[LOG_DIR=c:/logs](commons/src/main/resources/default.properties)*  
+- Linux, [`LOG_DIR=/mnt/c//logs`](commons/src/main/resources/default.properties)
+- WIndows, [`LOG_DIR=c:/logs`](commons/src/main/resources/default.properties)
 
 ### Log format
 Output log message format contains the following fields
 ```
 "%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n"
 ```
-- Date, message data time in *ISO8601* format
+- Date, message data time in `ISO8601` format
 - Log Level
 - Host name which writes log message
 - Application Port number
@@ -192,8 +225,8 @@ Output log message format contains the following fields
     ...
     2023-04-28T09:26:37,490 [INFO] DESKTOP-BCO8VB0:0:ui [] com.net.dis.DiscoveryClient - Getting all instance registry info from the eureka server
     ```  
-    after application server starting
-    *Spring boot 1.5.22*
+    after application server starting<br>
+    `Spring boot 1.5.22`
     ```
     2023-04-28T09:52:41,552 [INFO] DESKTOP-BCO8VB0:0:ui [] org.dem.ars.ui.lis.EmbeddedServletListener - setting port 59601 to logger
     2023-04-28T09:52:41,555 [INFO] DESKTOP-BCO8VB0:0:ui [] org.dem.ars.com.AppPropertiesLookup - Set key: port, value: 59601
@@ -201,7 +234,7 @@ Output log message format contains the following fields
     ...
     2023-04-28T09:52:41,618 [INFO] DESKTOP-BCO8VB0:59601:ui [] org.dem.ars.com.AppPropertiesLookup - reInitLogger finish
     ```
-    *[Spring boot 3.0.2](https://github.com/spring-projects/spring-boot/commit/67556ba8eaf22a352b03fe197a0c452f695835a6)*
+    [`Spring boot 3.0.2`](https://github.com/spring-projects/spring-boot/commit/67556ba8eaf22a352b03fe197a0c452f695835a6)
     ```
     2023-04-28T09:56:57,906 [INFO] DESKTOP-BCO8VB0:0:order-service [] org.dem.ars.lis.ServletWebServerInitializedEventListener - setting port 59737 to logger
     2023-04-28T09:56:57,909 [INFO] DESKTOP-BCO8VB0:0:order-service [] org.dem.ars.com.AppPropertiesLookup - Set key: port, value: 59737
@@ -211,7 +244,7 @@ Output log message format contains the following fields
     ```
 - Application name which generates log message
 - Trace-ID
-    To trace log history [gateway-zuul](gateway-zuul) add *trace-id* HTTP header to all requests sends to downstream services.
+    To trace log history [gateway-zuul](gateway-zuul) add `trace-id` HTTP header to all requests sends to downstream services.
     Log example
     ```
     2023-04-28T10:18:44,940 [INFO] DESKTOP-BCO8VB0:8080:gateway-zuul [5d09fb08-19e9-4f7a-b4c7-0e071b798d6e] org.dem.ars.gat.fil.CustomPreZuulFilter - traceId: 5972b220-c19c-453f-98b2-111e3083d310
@@ -263,4 +296,4 @@ Example see in [build.sh](build.sh) (Linux) or [build.bat](build.bat) (Windows) 
 - Metrics
 - Redis
 - Feign client
-- AWS
+- [AWS ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
