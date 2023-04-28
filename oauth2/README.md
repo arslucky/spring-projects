@@ -2,7 +2,7 @@
 ## Goal
 The main goal of oauth2 project is to study microservice, oauth2 concepts, Spring Framework
 ## Architecture
-TODO
+![Architecture](./oauth2.drawio.png)
 ## Modules
 | Module | Java | Spring Boot | OAuth2 | CSRF | Description |
 |-|:-:|:-:|:-:|:-:|-|
@@ -214,10 +214,10 @@ Output log message format contains the following fields
 ```
 "%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n"
 ```
-- Date, message data time in `ISO8601` format
-- Log Level
-- Host name which writes log message
-- Application Port number
+- `Date`, message data time in `ISO8601` format
+- `Log Level`
+- `Host name` which writes log message
+- `Application Port number`<br>
     Note: Some services has random port number that generated and assigned with delay, after starting application server, [Tomcat](https://tomcat.apache.org/) by default.
     In this case the first log messages contain zero port number like that
     ```
@@ -242,17 +242,17 @@ Output log message format contains the following fields
     ...
     2023-04-28T09:56:57,963 [INFO] DESKTOP-BCO8VB0:59737:order-service [] org.dem.ars.com.AppPropertiesLookup - reInitLogger finish
     ```
-- Application name which generates log message
-- Trace-ID
-    To trace log history [gateway-zuul](gateway-zuul) add `trace-id` HTTP header to all requests sends to downstream services.
+- `Application name` which generates log message
+- `Trace-ID`
+    To trace log history [gateway-zuul](gateway-zuul) add `trace-id` HTTP header to all requests sends to downstream services.<br>
     Log example
     ```
     2023-04-28T10:18:44,940 [INFO] DESKTOP-BCO8VB0:8080:gateway-zuul [5d09fb08-19e9-4f7a-b4c7-0e071b798d6e] org.dem.ars.gat.fil.CustomPreZuulFilter - traceId: 5972b220-c19c-453f-98b2-111e3083d310
     2023-04-28T10:18:44,967 [INFO] DESKTOP-BCO8VB0:60651:ui [5972b220-c19c-453f-98b2-111e3083d310] org.dem.ars.ui.fil.CustomOncePerRequestFilter - headerParam: 5972b220-c19c-453f-98b2-111e3083d310
     2023-04-28T10:18:44,982 [INFO] DESKTOP-BCO8VB0:60651:ui [5972b220-c19c-453f-98b2-111e3083d310] org.dem.ars.ui.con.AppRestController - getInstanceId
     ```
-- Class name, output format reduces the size of the logger name. The rightmost name output without trimming, others are maximum 3 symbols
-- Log message
+- `Class name`, output format reduces the size of the logger name. The rightmost name output without trimming, others are maximum 3 symbols
+- `Log message`
 
 ## Testing
 Project contains 3 testing levels:
