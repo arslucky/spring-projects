@@ -1,5 +1,8 @@
 package org.demo.ars.commons;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
@@ -11,7 +14,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -57,6 +59,18 @@ public class AppPropertiesLookup implements StrLookup {
 
                 Properties defaultProperties = PropertiesUtils.loadProperties( "default");
                 prop.putAll( defaultProperties);
+
+                String profile = prop.getProperty( "spring.profiles.active");
+                if( isNotBlank( profile)) {
+                    defaultProperties.putAll( PropertiesUtils.loadProperties( "default", profile));
+                    prop.putAll( defaultProperties);
+                } else {
+                    int i = 0;
+                    while( isNotBlank( profile = prop.getProperty( String.format( "spring.profiles.active[%s]", i++)))) {
+                        defaultProperties.putAll( PropertiesUtils.loadProperties( "default", profile));
+                        prop.putAll( defaultProperties);
+                    }
+                }
 
                 int i = 0;
                 TreeSet<String> sortedKeys = new TreeSet<>( defaultProperties.stringPropertyNames());
@@ -169,7 +183,7 @@ public class AppPropertiesLookup implements StrLookup {
 
     private static String getValue( String value, Properties prop) {
 
-        if( StringUtils.isBlank( value)) {
+        if( isBlank( value)) {
             return value;
         }
         Matcher matcher = pattern.matcher( value);

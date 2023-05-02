@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: eureka-server
+  profiles:
+    active: dev
   kafka:
     bootstrap-servers:
       - ${KAFKA_HOST}:${KAFKA_PORT}
@@ -31,19 +33,11 @@ spring:
           consumer:
             header-mode: none
 eureka:
-#  instance:
-#    hostname: ${eureka_instance_hostname}
-#    lease-expiration-duration-in-seconds: ${eureka.heartbeat.waiting.interval:1}
   client:
     register-with-eureka: false
     fetch-registry: false
     service-url:
       defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka/
-  server:
-    enable-self-preservation: false
-#    expected-client-renewal-interval-seconds: ${eureka.heartbeat.sending.interval:1}
-#    eviction-interval-timer-in-ms: ${eureka.eviction.job.running.ms:5000}
-#    renewal-percent-threshold: ${eureka.heartbeat.expected:0.49}
 management:
   endpoints:
     web:
@@ -53,4 +47,16 @@ management:
         - info
   endpoint:
     health:
-      show-details: always    
+      show-details: always
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - dev
+eureka:
+  server:
+    enable-self-preservation: false
+    #expected-client-renewal-interval-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    eviction-interval-timer-in-ms: ${EUREKA_EVICTION_JOB_RUNNING_MS}
+    response-cache-update-interval-ms: ${CACHE_UPDATE_INTERVAL_MS}

@@ -38,7 +38,7 @@ eureka:
     service-url:
       defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka
     healthcheck:
-      enabled: true
+      enabled: false
   instance:
     hostname: ${EUREKA_INSTANCE_HOSTNAME}
     instance-id: ${spring.application.name}:${random.int}
@@ -80,3 +80,7 @@ spring:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}
     username: ${MYSQL_USER}
     password: ${MYSQL_USER_PASSWORD}
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    lease-expiration-duration-in-seconds: ${EUREKA_EVICTION_PERIOD_SECONDS}    

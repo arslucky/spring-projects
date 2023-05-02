@@ -3,6 +3,8 @@ server:
 spring:
   application:
     name: gateway-zuul
+  profiles:
+    active: dev
   kafka:
     bootstrap-servers:
       - ${KAFKA_HOST}:${KAFKA_PORT}
@@ -37,11 +39,10 @@ eureka:
     service-url:
       defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka
     healthcheck:
-      enabled: true
+      enabled: false
   instance:
-#    hostname: ${eureka_instance_hostname}
+    hostname: ${EUREKA_INSTANCE_HOSTNAME}
     instance-id: ${spring.application.name}:${server.port}
-#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 #management:
 #  endpoints:
 #    web:
@@ -104,3 +105,16 @@ management:
   health:
     defaults:
       enabled: true
+---
+spring:
+  profiles: dev
+eureka:
+  client:
+    #initial-instance-info-replication-interval-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    #instance-info-replication-interval-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    registry-fetch-interval-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+  instance:
+    lease-renewal-interval-in-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    lease-expiration-duration-in-seconds: ${EUREKA_EVICTION_PERIOD_SECONDS} 
+ribbon:
+    ServerListRefreshInterval: ${CACHE_UPDATE_INTERVAL_MS}

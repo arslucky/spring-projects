@@ -228,6 +228,7 @@ services:
          KAFKA_PORT: ${KAFKA_PORT}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
+         EUREKA_INSTANCE_HOSTNAME: ${GTW_HOST}
          AUTH_HOST: ${AUTH_HOST}
          AUTH_PORT: ${AUTH_PORT}
          #TODO:

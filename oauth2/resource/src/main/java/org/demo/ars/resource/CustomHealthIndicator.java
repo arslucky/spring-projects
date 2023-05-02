@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author arsen.ibragimov
- *
+ *         works when eureka.client.healthcheck.enabled: true
  */
 @Component
 public class CustomHealthIndicator implements HealthIndicator {
@@ -25,7 +25,7 @@ public class CustomHealthIndicator implements HealthIndicator {
          * status = Health.down().build();
          * }
          */
-        // logger.info( String.format( "heartbeat: %s", status.getStatus()));
+        logger.info( String.format( "heartbeat: %s", status.getStatus()));
         return status;
     }
 }

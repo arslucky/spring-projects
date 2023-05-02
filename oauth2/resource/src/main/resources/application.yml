@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: resource
+  profiles:
+    active:
+    - dev
   kafka:
     bootstrap-servers:
       - ${KAFKA_HOST}:${KAFKA_PORT}
@@ -41,7 +44,6 @@ eureka:
   instance:
     hostname: ${EUREKA_INSTANCE_HOSTNAME}
     instance-id: ${spring.application.name}:${random.int}
-#    lease-renewal-interval-in-seconds: ${eureka.heartbeat.sending.interval:10}
 management:
   health:
     defaults:
@@ -65,3 +67,10 @@ security:
   oauth2:
     resource:
       user-info-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/user
+---
+spring:
+  profiles: dev
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
+    lease-expiration-duration-in-seconds: ${EUREKA_EVICTION_PERIOD_SECONDS}      

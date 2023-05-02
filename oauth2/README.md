@@ -27,9 +27,15 @@ Properties can be overridden in command line.
 ### Linux
 Run [build.sh](build.sh)
 Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
+```sh
+./buidl.sh
+```
 ### Windows
 Run [build.bat](build.bat)
 Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
+```sh
+build.bat
+```
 ## Maven
 Use Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
 Each module contains [maven.config](commons/.mvn/maven.config) which refers to the parent [toolchains.xml](toolchains.xml) configuration file with multiple java versions 
@@ -39,6 +45,9 @@ Applications can be run by multiple ways
 1. Docker
     - General
         - [docker-env.sh](docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
+            ```sh
+            ./docker-env.sh
+            ```
         - add host mapping
             ```sh 
             127.0.0.1 kafka
@@ -47,10 +56,15 @@ Applications can be run by multiple ways
             Windows - C:\Windows\System32\drivers\etc\hosts
     - CLI
         [docker-build.sh](docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
+        ```sh
+        ./docker-build.sh
+        ```
     - Compose
-        [docker-compose.yml](docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts
-         
+        [docker-compose.yml](docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
         [docker-compose.sh](docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
+        ```sh
+        ./docker-compose.sh
+        ```
     - Initialize data<br>
         Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
         - Kafka
@@ -273,10 +287,10 @@ Project contains 3 testing levels:
     - BUS_ENABLE=true
     
     The following services have to be started:
-    - Zookeeper
-    - Kafka
-    - MySQL
-    - MongoDB
+    - [Zookeeper](https://zookeeper.apache.org/)
+    - [Kafka](https://kafka.apache.org/)
+    - [MySQL](https://www.mysql.com/)
+    - [MongoDB](https://www.mongodb.com/)
     - [authorization-server](authorization-server)
     - [config-server](config-server)
 
@@ -288,12 +302,12 @@ Example see in [build.sh](build.sh) (Linux) or [build.bat](build.bat) (Windows) 
 - Consumer-Driven Contract tests
 - Kubernettes
 - JWT
-- React
+- [React](https://react.dev/)
 - ~~Docker Compose~~ (done)
-- Ribbon balancer 
+- ~~Ribbon balancer~~ ([done](https://lifeinide.com/post/2017-12-07-instant-ribbon-client-init-with-eureka/))
 - Refresh token
-- GPRC
+- gPRC
 - Metrics
-- Redis
+- [Redis](https://redis.io/)
 - Feign client
 - [AWS ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)

@@ -113,6 +113,7 @@ docker run -dp 8080:8080 --network $NETWORK --network-alias $GTW_HOST --hostname
     -e AUTH_PORT=$AUTH_PORT \
     -e EUREKA_HOST=$EUREKA_HOST \
     -e EUREKA_PORT=$EUREKA_PORT \
+    -e EUREKA_INSTANCE_HOSTNAME=$GTW_HOST \
     -e KAFKA_HOST=$KAFKA_HOST \
     -e KAFKA_PORT=$KAFKA_PORT \
     -e ZOO_HOST=$ZOO_HOST \
