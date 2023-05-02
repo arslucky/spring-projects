@@ -17,11 +17,9 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.lookup.StrLookup;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 /**
@@ -104,9 +102,6 @@ public class AppPropertiesLookup implements StrLookup {
 
                 map.put( logLevel, String.valueOf( prop.get( logLevel)));
 
-                Configurator.initialize( null, LOG4J2_XML);
-                logger = LoggerFactory.getLogger( AppPropertiesLookup.class);
-
                 log( Level.INFO, map.toString());
 
                 initialized = true;
@@ -152,7 +147,7 @@ public class AppPropertiesLookup implements StrLookup {
             init();
         }
         String value = map.get( key);
-        log( Level.INFO, String.format( "%s=%s", key, value));
+        log( Level.DEBUG, String.format( "lookup %s=%s", key, value));
 
         return value;
     }
