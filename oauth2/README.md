@@ -220,7 +220,7 @@ File name [KAFKA_LOG_FILE](commons/src/main/resources/default.properties) variab
 
 ### Log directory
 By default all modules writes logs to the same files locate in a shared directory
-- Linux, [`LOG_DIR=/mnt/c//logs`](commons/src/main/resources/default.properties)
+- Linux, [`LOG_DIR=/mnt/c/logs`](commons/src/main/resources/default.properties)
 - WIndows, [`LOG_DIR=c:/logs`](commons/src/main/resources/default.properties)
 
 ### Log format
