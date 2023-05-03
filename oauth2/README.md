@@ -1,6 +1,6 @@
 # Oauth2
 ## Goal
-The main goal of oauth2 project is to study microservice, oauth2 concepts, Spring Framework
+The main goal of oauth2 project is to study microservices, oauth2 concepts, Spring Framework
 ## Architecture
 ![Architecture](./oauth2.drawio.png)
 ## Modules
@@ -18,10 +18,10 @@ The main goal of oauth2 project is to study microservice, oauth2 concepts, Sprin
 |[order-service](order-service)|17|3.0.2|TODO|TODO|Order service, stores Order and Invoice data in MongoDB|
 
 ## Environment
-Default application [properties](commons/src/main/resources/default.properties) are put to the [commons](commons) module and available 
+Default application [properties](commons/src/main/resources/default.properties) and [dev properties](commons/src/main/resources/default-dev.properties) are put to the [commons](commons) module and available 
 in the each module classpath as a library. This approach allows to store all **pre-Spring context** loading settings in one place and make easier running 
 applications and testing in an IDE without extra variable settings.
-Properties can be overridden in command line.
+Properties can be overridden in a command line.
  
 ## Build
 ### Linux
