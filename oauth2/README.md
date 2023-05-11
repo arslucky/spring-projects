@@ -1,13 +1,13 @@
 # Oauth2
 ## Goal
-The main goal of oauth2 project is to study microservices, oauth2 concepts, Spring Framework
+The main goal of oauth2 project is to study [microservices](https://microservices.io/), OAuth2 concepts, Spring Framework
 ## Architecture
 ![Architecture](./oauth2.drawio.png)
 ## Modules
 | Module | Java | Spring Boot | OAuth2 | CSRF | Description |
 |-|:-:|:-:|:-:|:-:|-|
 |[commons](commons)|1.8|-|-|-|Common module for the whole project, contains default properties which are initialized before Spring context loading |
-|[authorization-server](authorization-server)|1.8|1.5.22|+|+|Oauth2 authorization server|
+|[authorization-server](authorization-server)|1.8|1.5.22|+|+|OAuth2 authorization server|
 |[config-server](config-server)|17|3.0.2|-|-|Config server, loads properties from [GitHub repository](https://github.com/arslucky/properties/blob/main/oauth2.properties)|
 |[log-server](log-server)|17|3.0.2|-|-|Log server, reads log messages from the Kafka broker and outputs to a console and file|
 |[eureka-server](eureka-server)|17|3.0.2|-|-|Eureka server to register services|
@@ -270,17 +270,17 @@ Output log message format contains the following fields
 
 ## Testing
 Project contains 3 testing levels:
-- Unit, component testing without loading Spring context
+- `Unit`, component testing without loading Spring context
     Environment variables:
     - KAFKA_LOG_LEVEL=OFF
     - group-tests=none
     - BUS_ENABLE=false
-- Integration, components interaction testing into the module with Spring context loading, Includes Unit testing.
+- `Integration`, components interaction testing into the module with Spring context loading, Includes Unit testing.
     Environment variables:
     - KAFKA_LOG_LEVEL=OFF
     - group-tests=integration-tests
     - BUS_ENABLE=false
-- End-to-end, services interaction. Includes Unit, Integration testing.
+- `End-to-end`, services interaction. Includes Unit, Integration testing.
     Environment variables:
     - KAFKA_LOG_LEVEL=INFO
     - group-tests=ms-integration-tests
@@ -296,11 +296,35 @@ Project contains 3 testing levels:
 
 Example see in [build.sh](build.sh) (Linux) or [build.bat](build.bat) (Windows) files
 
+## Resources
+The below matrix shows average resource consuming for the whole project on a local machine running as a Docker container/image
+
+|Container/Image|Size (MB)|Memory (MB), instance 1|Memory (MB), instance 2|
+|-|:-:|:-:|:-:|
+|[eclipse-temurin:17-jdk-jammy](https://hub.docker.com/layers/library/eclipse-temurin/17-jdk-jammy/images/sha256-9dd6a19e4819b066aa2bd8e54d5988a49cca29736fe5447cb0a57daa975f8935?context=explore)|456|||     
+|[eclipse-temurin:8-jdk-jammy](https://hub.docker.com/layers/library/eclipse-temurin/8-jdk-jammy/images/sha256-f03f304488fbf8ac293e5b4dcbfb8bb7d049068f66429f51daefb958652a81ab?context=explore)|264|||     
+|[bitnami/kafka:3.3.2](https://hub.docker.com/layers/bitnami/kafka/3.3.2/images/sha256-6fa209c22f772d991aed9877033bc51c69fe12b792a038449c47456d299fd2e2?context=explore)|560|655|| 
+|[mysql:8.0.32](https://hub.docker.com/layers/library/mysql/8.0.32/images/sha256-c86dfd69b3d1437e5d192447f0bdc57407d48bd379b97a453e11d72b97962e3b?context=explore)|530|364|| 
+|[bitnami/mongodb:6.0.5](https://hub.docker.com/layers/bitnami/mongodb/6.0.5/images/sha256-419f129df0140834d89c94b29700c91f38407182137be480a0d6c6cbe2e0d00a?context=explore)|573|171|| 
+|[bitnami/zookeeper:3.7.1](https://hub.docker.com/layers/bitnami/zookeeper/3.7.1/images/sha256-18eff9cf85e636c0895716a9fcbfdac1d45565d9f5852f6afc5e2f3499d27b94?context=explore)|508|130|| 
+|[authorization-server](authorization-server)|43|374|| 
+|[config-server](config-server)|62|364|| 
+|[customer-service](customer-service)|89|532|632|
+|[eureka-server](eureka-server)|72|490|| 
+|[gateway-zuul](gateway-zuul)|60|475|| 
+|[log-server](log-server)|46|319|| 
+|[order-service](order-service)|69|395|378|
+|[resource](resource)|56|565|435|
+|[ui](ui)|57|485|640|
+|**Total**|**3445**|**5319**|**2085**|
+||||**7404**|
+
+
 ## TODO List
 - Https
 - OpenID
 - Consumer-Driven Contract tests
-- Kubernettes
+- Kubernettes (77% market)
 - JWT
 - [React](https://react.dev/)
 - ~~Docker Compose~~ (done)
@@ -310,4 +334,6 @@ Example see in [build.sh](build.sh) (Linux) or [build.bat](build.bat) (Windows) 
 - Metrics
 - [Redis](https://redis.io/)
 - Feign client
-- [AWS ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html)
+- [AWS ECS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html) hosted on EC2 instances, all services in 1 place and 1 account, (2% market)
+- Azure DevOps and Cloud platforms (2 different application and accounts)
+- Keycloak
