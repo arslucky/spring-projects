@@ -1,6 +1,33 @@
 # Oauth2
+
+## Table of content:
+1. [Goal](#goal)
+1. [Architecture](#architecture)
+1. [Modules](#modules)
+1. [Environment](#environment)
+1. [Build](#build)
+    - [Linux](#linux)
+    - [Windows](#windows)
+1. [Maven](#maven)
+1. [Run project](#run-project)
+    - [Docker](#docker)
+    - [Standalone](#standalone)
+    - [IDE](#ide)
+1. [Stop project](#stop-project)
+1. [Ports](#ports)
+1. [UI](#ui)
+1. [Security](#security)
+1. [Bus](#bus)
+1. [Logging](#logging)
+    - [Log directory](#log-directory)
+    - [Log format](#log-format)
+1. [Testing](#testing)
+1. [Resources](#resources)
+1. [TODO List](#todo-list)
+
 ## Goal
 The main goal of oauth2 project is to study [microservices](https://microservices.io/), OAuth2 concepts, Spring Framework
+
 ## Architecture
 ![Architecture](./oauth2.drawio.png)
 ## Modules
@@ -37,69 +64,70 @@ Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 build.bat
 ```
 ## Maven
-Use Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
+Applied Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
 Each module contains [maven.config](commons/.mvn/maven.config) which refers to the parent [toolchains.xml](toolchains.xml) configuration file with multiple java versions 
 
 ## Run project
 Applications can be run by multiple ways
-1. Docker
-    - General
-        - [docker-env.sh](docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
-            ```sh
-            ./docker-env.sh
-            ```
-        - add host mapping
-            ```sh 
-            127.0.0.1 kafka
-            ```
-            Linux - /etc/hosts<br>
-            Windows - C:\Windows\System32\drivers\etc\hosts
-    - CLI
-        [docker-build.sh](docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
+### Docker
+- General
+    - [docker-env.sh](docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
         ```sh
-        ./docker-build.sh
+        ./docker-env.sh
         ```
-    - Compose
-        [docker-compose.yml](docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
-        [docker-compose.sh](docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
+    - add host mapping
+        ```sh 
+        127.0.0.1 kafka
+        ```
+        Linux - /etc/hosts<br>
+        Windows - C:\Windows\System32\drivers\etc\hosts
+- CLI
+    [docker-build.sh](docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
+    ```sh
+    ./docker-build.sh
+    ```
+- Compose
+    [docker-compose.yml](docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
+    [docker-compose.sh](docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
+    ```sh
+    ./docker-compose.sh
+    ```
+- Initialize data<br>
+    Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
+    - Kafka
         ```sh
-        ./docker-compose.sh
+        ./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
         ```
-    - Initialize data<br>
-        Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
-        - Kafka
-            ```sh
-            ./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
-            ```
-        - MySQL
-        *[dev-database.sql](customer-service/db/dev-database.sql)*
-        - MongoDB
-        *[dev-database.js](order-service/db/dev-database.js)*        
-1. Standalone<br>
-    Note: Zookeeper, Kafka, MySQL, MongoDB have to be up.
-    - Initialization
-        - create [Kafka topic](https://kafka.apache.org/quickstart)
-        ```sh
-        kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
-        ```
-        - init MySQL
-        ```sh
-        mysql -u$MYSQL_ROOT -p$MYSQL_ROOT_PASSWORD --host=$MYSQL_HOST --port=$MYSQL_PORT < ./customer-service/db/dev-database.sql
-        ```
-        - init MongoDB
-        ```sh
-        mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./order-service/db/dev-database.js
-        ```
-    - Linux, [start.sh](start.sh) - Up modules/applications
-        ```sh
-        ./start.sh
-        ```
-    - Windows, [start.bat](start.bat) - Up modules/applications
-        ```sh
-        start.bat
-        ```
-        Note: Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
-1. IDE<br>
+    - MySQL
+    *[dev-database.sql](customer-service/db/dev-database.sql)*
+    - MongoDB
+    *[dev-database.js](order-service/db/dev-database.js)*
+            
+### Standalone<br>
+Note: Zookeeper, Kafka, MySQL, MongoDB have to be up.
+- Initialization
+    - create [Kafka topic](https://kafka.apache.org/quickstart)
+    ```sh
+    kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
+    ```
+    - init MySQL
+    ```sh
+    mysql -u$MYSQL_ROOT -p$MYSQL_ROOT_PASSWORD --host=$MYSQL_HOST --port=$MYSQL_PORT < ./customer-service/db/dev-database.sql
+    ```
+    - init MongoDB
+    ```sh
+    mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./order-service/db/dev-database.js
+    ```
+- Linux, [start.sh](start.sh) - Up modules/applications
+    ```sh
+    ./start.sh
+    ```
+- Windows, [start.bat](start.bat) - Up modules/applications
+    ```sh
+    start.bat
+    ```
+    Note: Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
+### IDE<br>
 Run by default any module/application, no extra efforts. To achieve that all common application settings were put to 
 default [properties](commons/src/main/resources/default.properties) and build as a library
 
@@ -172,7 +200,7 @@ User / password:
 ## Bus
 Bus pipeline is built on Kafka broker, each module connects to it. Log level is stored in the GitHub repository [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties)
 `LOG_LEVEL=INFO` default value. There is two ways to change logging level in application
-1. update setting in [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties)|, commit changes
+1. update setting in [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties), commit changes
 1. post HTTP request 
 ```sh
 curl -H 'Content-Type: application/json' -d '{"name":"LOG_LEVEL","value":"DEBUG"}' http://localhost:8889/actuator/busenv
