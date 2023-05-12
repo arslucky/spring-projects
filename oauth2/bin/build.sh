@@ -9,10 +9,10 @@ export LOG_FILE=oauth2_test.log
 # BUS_ENABLE=false, switch off Bus/Kafka feature, true by default                                         ## 
 ############################################################################################################
 
-mvn --file ./commons/pom.xml --toolchains ./toolchains.xml clean install \
+mvn --file ../commons/pom.xml --toolchains ../toolchains.xml clean install \
 -Dlog.dir=/mnt/c/logs
 
-mvn clean package -pl !commons \
+mvn --file ../pom.xml --toolchains ../toolchains.xml clean package -pl !commons \
 -DLOG_DIR=/mnt/c/logs \
 -DKAFKA_LOG_LEVEL=OFF \
 -Dgroup-tests=none \

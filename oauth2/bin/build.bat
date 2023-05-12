@@ -8,10 +8,9 @@ set LOG_FILE=oauth2_test.log
 :: group-tests=ms-integration-tests, turn on microservice integration tests, involving 'integration-tests' ::
 :: BUS_ENABLE=false, switch off Bus/Kafka feature, true by default                                         :: 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+call mvn --file ..\commons\pom.xml --toolchains ..\toolchains.xml clean install
 
-call mvn --file .\commons\pom.xml --toolchains .\toolchains.xml clean install
-
-call mvn clean package -pl !commons ^
+call mvn --file ..\pom.xml --toolchains ..\toolchains.xml clean package -pl !commons ^
 -DKAFKA_LOG_LEVEL=OFF ^
 -Dgroup-tests=none ^
 -DBUS_ENABLE=false

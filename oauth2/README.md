@@ -29,7 +29,7 @@
 The main goal of oauth2 project is to study [microservices](https://microservices.io/), OAuth2 concepts, Spring Framework
 
 ## Architecture
-![Architecture](./oauth2.drawio.png)
+![Architecture](./bin/resource/oauth2.drawio.png)
 ## Modules
 | Module | Java | Spring Boot | OAuth2 | CSRF | Description |
 |-|:-:|:-:|:-:|:-:|-|
@@ -52,16 +52,16 @@ Properties can be overridden in a command line.
  
 ## Build
 ### Linux
-Run [build.sh](build.sh)
+Run [bin/build.sh](bin/build.sh)
 Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 ```sh
-./buidl.sh
+./bin/build.sh
 ```
 ### Windows
-Run [build.bat](build.bat)
+Run [bin\build.bat](bin/build.bat)
 Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 ```sh
-build.bat
+bin\build.bat
 ```
 ## Maven
 Applied Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
@@ -71,9 +71,9 @@ Each module contains [maven.config](commons/.mvn/maven.config) which refers to t
 Applications can be run by multiple ways
 ### Docker
 - General
-    - [docker-env.sh](docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
+    - [bin/docker-env.sh](bin/docker-env.sh) - export container environment variables including application [properties](commons/src/main/resources/default.properties)
         ```sh
-        ./docker-env.sh
+        ./bin/docker-env.sh
         ```
     - add host mapping
         ```sh 
@@ -82,15 +82,15 @@ Applications can be run by multiple ways
         Linux - /etc/hosts<br>
         Windows - C:\Windows\System32\drivers\etc\hosts
 - CLI
-    [docker-build.sh](docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
+    [bin/docker-build.sh](bin/docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
     ```sh
-    ./docker-build.sh
+    ./bin/docker-build.sh
     ```
 - Compose
-    [docker-compose.yml](docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
-    [docker-compose.sh](docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
+    [bin/docker-compose.yml](bin/docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
+    [bin/docker-compose.sh](bin/docker-compose.sh) - Run Docker containers in detached mode. Initialize Kafka topic, MySQL, MongoDB data at first running
     ```sh
-    ./docker-compose.sh
+    ./bin/docker-compose.sh
     ```
 - Initialize data<br>
     Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
@@ -118,13 +118,13 @@ Note: Zookeeper, Kafka, MySQL, MongoDB have to be up.
     ```sh
     mongosh $MONGO_HOST:$MONGO_PORT --username $MONGO_ROOT --password $MONGO_ROOT_PASSWORD -f ./order-service/db/dev-database.js
     ```
-- Linux, [start.sh](start.sh) - Up modules/applications
+- Linux, [bin/start.sh](bin/start.sh) - Up modules/applications
     ```sh
-    ./start.sh
+    ./bin/start.sh
     ```
-- Windows, [start.bat](start.bat) - Up modules/applications
+- Windows, [bin\start.bat](bin/start.bat) - Up modules/applications
     ```sh
-    start.bat
+    bin\start.bat
     ```
     Note: Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
 ### IDE<br>
@@ -142,13 +142,13 @@ default [properties](commons/src/main/resources/default.properties) and build as
     docker compose stop
     ```
 - Standalone
-    Linux - [stop.sh](stop.sh), kill process in the reverse starting order, with default 7 signal<br>
+    Linux - [bin/stop.sh](bin/stop.sh), kill process in the reverse starting order, with default 7 signal<br>
     ```sh
-    ./stop.sh
+    ./bin/stop.sh
     ```
-    Windows - [stop.bat](stop.bat) kill process in the reverse starting order
+    Windows - [bin\stop.bat](bin/stop.bat) kill process in the reverse starting order
     ```sh
-    stop.bat
+    bin\stop.bat
     ```
 
 ## Ports
@@ -322,7 +322,7 @@ Project contains 3 testing levels:
     - [authorization-server](authorization-server)
     - [config-server](config-server)
 
-Example see in [build.sh](build.sh) (Linux) or [build.bat](build.bat) (Windows) files
+Example see in [build.sh](bin/build.sh) (Linux) or [build.bat](bin/build.bat) (Windows) files
 
 ## Resources
 The below matrix shows average resource consuming for the whole project on a local machine running as a Docker container/image

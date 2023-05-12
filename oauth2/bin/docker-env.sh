@@ -1,7 +1,7 @@
 echo 'setting environment values'
 #
 function prop {
-    grep "${1}=" ./commons/src/main/resources/default.properties|cut -d'=' -f2
+    grep "${1}=" ../commons/src/main/resources/default.properties|cut -d'=' -f2
 }
 #
 export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
