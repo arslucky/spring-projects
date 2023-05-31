@@ -13,22 +13,40 @@ import org.demo.ars.domain.customer.CustomerRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 //@formatter:off
 @EnabledIf( "#{systemProperties['group-tests'] != null "
-         + "and systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests')}")
+        + "and (systemProperties['group-tests'].toLowerCase().contains('integration-tests')"
+                + "or systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests'))}")
 //@formatter:on
 @ActiveProfiles( "test")
-@SpringBootTest
-class CustomerServiceApplicationIntegrationTests {
+@SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
+public class CustomerServiceApplicationIntegrationTests {
+
+    @LocalServerPort
+    private int port;
 
     @Autowired
     private CustomerRepository customerRepository;
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private Environment env;
+
+    @Autowired
+    private TestRestTemplate template;
+
+    private static String path = "http://localhost";
 
 	@Test
     public void customerTest() {
@@ -66,4 +84,20 @@ class CustomerServiceApplicationIntegrationTests {
         assertTrue( persistedResult.isPresent());
         assertEquals( persistedResult.get().getAccountNumber(), "12345");
     }
+
+    @Test
+    public void restApi() {
+        String pathRest = String.format( "%s:%s%s", path, port, env.getProperty( "spring.data.rest.base-path"));
+        ResponseEntity<String> response = template.getForEntity( pathRest, String.class);
+        assertEquals( HttpStatus.OK, response.getStatusCode());
+
+        String body = response.getBody();
+
+        assertNotNull( body);
+
+        assertTrue( body.contains( "_links"));
+        assertTrue( body.contains( "customers"));
+        assertTrue( body.contains( "profile"));
+    }
+
 }

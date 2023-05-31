@@ -20,11 +20,12 @@ import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 //@formatter:off
 @EnabledIf( "#{systemProperties['group-tests'] != null "
-           + "and systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests')}")
+        + "and (systemProperties['group-tests'].toLowerCase().contains('integration-tests')"
+                + "or systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests'))}")
 //@formatter:on
 @ActiveProfiles( "test")
 @SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
-class OrderServiceApplicationIntegrationTests {
+public class OrderServiceApplicationIntegrationTests {
 
     @Autowired
     private OrderRepository orderRep;
