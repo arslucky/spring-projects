@@ -2,25 +2,27 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Spring self-education project</title>
+<title>Spring OAuth2 based project</title>
+<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/ui/main.css" />
+<script type="text/javascript" src="/webjars/bootstrap/dist/js/bootstrap.js"></script>
 <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
 <script type="text/javascript">
     function authorization(xhr, settings) {
-        //console.log('before send, ' + settings.type + ', ' + settings.url);
         if (!(/^\/token/.test(settings.url) || /^\/user/.test(settings.url))) {
-            getToken();
-            //console.log('token=' + token);
+            const token = getToken();
             xhr.setRequestHeader("Authorization", token);
         }
         if (settings.type == 'POST' || settings.type == 'PUT'
                 || settings.type == 'DELETE') {
-            var csrfToken = Cookies.get('XSRF-TOKEN');
+            const csrfToken = Cookies.get('XSRF-TOKEN');
             if (csrfToken != '') {
                 xhr.setRequestHeader("X-XSRF-TOKEN", csrfToken);
             }
         }
     };
+
     function logoutCustom() {
         $.ajax({
             url : "/logout",
@@ -36,6 +38,7 @@
             }
         });
     };
+
     function onLoad() {
         $.ajax({
             url : "/user",
@@ -64,6 +67,7 @@
     };
 
     function getToken() {
+        let token;
         $.ajax({
             async : false,
             url : "/token",
@@ -80,9 +84,10 @@
                 console.log(errorThrown);
             }
         });
+        return token;
     };
+
     function getService(requestUrl, requestType, objectId, isJson) {
-        getToken();
         $.ajax({
             url : requestUrl,
             type : requestType,
@@ -103,83 +108,70 @@
             }
         });
     };
-    function getStatistic() {
-        $.ajax({
-            url : "/resource/getStatistic",
-            type : 'POST',
-            beforeSend : function(xhr, settings) {
-                authorization(xhr, settings)
-            },
-            success : function(res) {
-                $("#statistic").html(res);
-            },
-            error : function(request, textStatus, errorThrown) {
-                $("#statistic").html(request.responseText);
-                console.log(request.responseText);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
-        });
-    };
-    function getDate() {
-        $.ajax({
-            url : "/ui/getDate",
-            type : 'POST',
-            beforeSend : function(xhr, settings) {
-                authorization(xhr, settings)
-            },
-            success : function(res) {
-                $("#date").html(res);
-            },
-            error : function(request, textStatus, errorThrown) {
-                console.log(request.responseText);
-                console.log(textStatus);
-                console.log(errorThrown);
-            }
-        });
-    }
 </script>
 </head>
 <body onload="onLoad();">
-    <div class="container unauthenticated">
-        <a href="/login">Login</a>
-    </div>
-    <div class="container authenticated" style="display: none">
-        <a href="javascript:logoutCustom();">Logout</a>
-    </div>
-    <div class="container authenticated" style="display: none">
+    <span class="container authenticated" style="display: none">
         Welcome <span id="user"></span>
-    </div>
+    </span>
+    <span class="container unauthenticated">
+        <a href="/login">Login</a>
+    </span>
+    <span class="container authenticated" style="display: none">
+        <a href="javascript:logoutCustom();">Logout</a>
+    </span>
     <br>
-    <table>
-        <tr class="container user" style="display: none">
-            <td><a href="javascript:getService('/ui/getInstanceId', 'GET', '#uiId', false);">UI ID:</a></td>
-            <td><span id="uiId"></span></td>
-        </tr>
-        <tr class="container user" style="display: none">
-            <td><a href="javascript:getService('/resource/getInstanceId', 'GET', '#resourceId', false);">Resource ID:</a></td>
-            <td><span id="resourceId"></span></td>
-        </tr>
-        <tr class="container user" style="display: none">
-            <td><a href="javascript:getDate();">Date:</a></td>
-            <td><span id="date"></span></td>
-        </tr>
-        <tr class="container user admin" style="display: none">
-            <td><a href="javascript:getStatistic();">Statistic:</a></td>
-            <td><span id="statistic"></span></td>
-        </tr>
-        <tr class="container admin" style="display: none">
-            <td><a href="javascript:getService('/customer/getCustomer/12345', 'GET', '#customerId', true);">Customer:</a></td>
-            <td><span id="customerId"></span></td>
-        </tr>
-        <tr class="container admin" style="display: none">
-            <td><a href="javascript:getService('/customer/getAccount/12345', 'GET', '#accountId', true);">Account:</a></td>
-            <td><span id="accountId"></span></td>
-        </tr>
-        <tr class="container user admin" style="display: none">
-            <td><a href="javascript:getService('/order/getOrder/12345', 'GET', '#orderId', true);">Order:</a></td>
-            <td><span id="orderId"></span></td>
-        </tr>
-    </table>
+
+    <header>
+        <nav class="nav nav-tabs">
+            <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#react" href="#">React</a>
+            <a class="nav-link" data-bs-toggle="tab" data-bs-target="#legacy" href="#">Legacy</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="react" role="tabpanel">
+                <div class="container">
+                    <div id="react"></div>
+                    <script type="text/javascript" src="ui/built/bundle.js"></script>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="legacy" role="tabpanel">
+                <div class="container">
+                    <table>
+                        <tr class="container user" style="display: none">
+                            <td><a href="javascript:getService('/ui/getInstanceId', 'GET', '#uiId', false);">UI ID:</a></td>
+                            <td><span id="uiId"></span></td>
+                        </tr>
+                        <tr class="container user" style="display: none">
+                            <td><a href="javascript:getService('/resource/getInstanceId', 'GET', '#resourceId', false);">Resource ID:</a></td>
+                            <td><span id="resourceId"></span></td>
+                        </tr>
+                        <tr class="container user" style="display: none">
+                            <td><a href="javascript:getService('/ui/getDate', 'POST', '#date', false);">Date:</a></td>
+                            <td><span id="date"></span></td>
+                        </tr>
+                        <tr class="container user admin" style="display: none">
+                            <td><a href="javascript:getService('/resource/getStatistic', 'POST', '#statistic', false);">Statistic:</a></td>
+                            <td><span id="statistic"></span></td>
+                        </tr>
+                        <tr class="container admin" style="display: none">
+                            <td><a href="javascript:getService('/customer/getCustomer/12345', 'GET', '#customerId', true);">Customer:</a></td>
+                            <td><span id="customerId"></span></td>
+                        </tr>
+                        <tr class="container admin" style="display: none">
+                            <td><a href="javascript:getService('/customer/getAccount/12345', 'GET', '#accountId', true);">Account:</a></td>
+                            <td><span id="accountId"></span></td>
+                        </tr>
+                        <tr class="container user admin" style="display: none">
+                            <td><a href="javascript:getService('/order/getOrder/12345', 'GET', '#orderId', true);">Order:</a></td>
+                            <td><span id="orderId"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

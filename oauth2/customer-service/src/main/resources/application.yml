@@ -31,6 +31,10 @@ spring:
             header-mode: none
           consumer:
             header-mode: none
+  data:
+    rest:
+      base-path: /api
+      
 eureka:
   client:
     register-with-eureka: true

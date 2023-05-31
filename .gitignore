@@ -28,3 +28,8 @@ build/
 **/mvnw
 **/mvnw.cmd
 **/*.log
+node_modules/
+package-lock.js
+**/static/built/
+*.bkp
+package-lock.json
