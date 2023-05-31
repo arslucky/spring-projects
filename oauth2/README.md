@@ -16,6 +16,8 @@
 1. [Stop project](#stop-project)
 1. [Ports](#ports)
 1. [UI](#ui)
+    - [React](#react)
+    - [Legacy](#legacy)
 1. [Security](#security)
 1. [Bus](#bus)
 1. [Logging](#logging)
@@ -26,7 +28,7 @@
 1. [TODO List](#todo-list)
 
 ## Goal
-The main goal of oauth2 project is to study [microservices](https://microservices.io/), OAuth2 concepts, Spring Framework
+The main goal of Oauth2 project is to study [microservices](https://microservices.io/), [OAuth2 concepts](https://oauth.net/2/), [Spring Framework](https://spring.io/)
 
 ## Architecture
 ![Architecture](./bin/resource/oauth2.drawio.png)
@@ -174,11 +176,60 @@ Non default ports are used in this project. This allowed to find narrow places i
 |MongoDB|27018|MONGO_PORT|
 
 ## UI
-The http://localhost:8080 the main entry point. Forward to authentication page if user has not loggined.
+The http://localhost:8080 the main entry point. Forwarded to authentication page if user has not loggined.<br>
 
 User / password:
 - *user / password* - User role
 - *admin / password* - Admin role
+
+UI has been built by [React](https://react.dev/) and Java Script legacy.<br>
+
+### React
+*React* tab contains list of
+- [customers](customer-service) with *First Name, Last Name, Email* fields
+- page navigation buttons: *First. Previous, Next, Last*
+- *page size* field to set maximum items on the page
+- *Create* link to create a new customer in a dialog window
+- *Delete* button, to delete customer 
+
+[customer-service](customer-service) supports REST through [Spring Data Rest](https://docs.spring.io/spring-data/rest/docs/current/reference/html/) which generates/wraps repositories.
+
+```sh
+ curl http://localhost:54786/api
+{
+  "_links" : {
+    "accounts" : {
+      "href" : "http://localhost:54786/api/accounts{?page,size,sort}",
+      "templated" : true
+    },
+    "customers" : {
+      "href" : "http://localhost:54786/api/customers{?page,size,sort}",
+      "templated" : true
+    },
+    "profile" : {
+      "href" : "http://localhost:54786/api/profile"
+    }
+  }
+}
+```
+*Note:* port is random
+
+How it works in details please find [there](https://spring.io/guides/tutorials/react-and-spring-data-rest/)
+
+To bundle JS modules used [Webpack](https://webpack.js.org/), [Babel](https://babeljs.io/) applied to make backwards compatible version of JavaScript. 
+
+- Customer List
+
+![Customer list](./bin/resource/react_customer_list.png)
+
+- New Customer
+
+![New customer dialog](./bin/resource/new_customer.png)
+
+### Legacy
+Legacy tab has built on clear HTML and Java Script
+
+![Legacy tab](./bin/resource/legacy.png)
  
 |UI element|HTTP Request|Role|Description|
 |-|-|-|-|
@@ -201,10 +252,18 @@ User / password:
 Bus pipeline is built on Kafka broker, each module connects to it. Log level is stored in the GitHub repository [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties)
 `LOG_LEVEL=INFO` default value. There is two ways to change logging level in application
 1. update setting in [oauth2.properties](https://github.com/arslucky/properties/blob/main/oauth2.properties), commit changes
-1. post HTTP request 
+1. post HTTP request
+- all applications 
 ```sh
 curl -H 'Content-Type: application/json' -d '{"name":"LOG_LEVEL","value":"DEBUG"}' http://localhost:8889/actuator/busenv
-``` 
+```
+- specified [application](https://docs.spring.io/spring-cloud-bus/docs/3.1.2/reference/html/#addressing-an-instance)
+```sh
+curl -H 'Content-Type: application/json' -d '{"name":"LOG_LEVEL","value":"DEBUG"}' http://localhost:8889/actuator/busenv/ui
+```
+
+Note: the above command rises *org.springframework.cloud.context.environment.EnvironmentChangeEvent* event that is not handled in application, instead of try following<br>  
+
 than put refresh scope request to bus pipeline
 - all applications
 ```sh 
@@ -354,7 +413,7 @@ The below matrix shows average resource consuming for the whole project on a loc
 - Consumer-Driven Contract tests
 - Kubernettes (77% market)
 - JWT
-- [React](https://react.dev/)
+- ~~[React](https://react.dev/)~~ (done)
 - ~~Docker Compose~~ (done)
 - ~~Ribbon balancer~~ ([done](https://lifeinide.com/post/2017-12-07-instant-ribbon-client-init-with-eureka/))
 - Refresh token
