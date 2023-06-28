@@ -29,7 +29,7 @@
         </RollingFile>
         <Kafka name="Kafka" topic="${sys:LOG_TOPIC}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
-            <Property name="bootstrap.servers">${sys:KAFKA_HOST}:${sys:KAFKA_PORT}</Property>
+            <Property name="bootstrap.servers">${sys:KAFKA_HOSTS}</Property>
         </Kafka>
     </Appenders>
     <Loggers>

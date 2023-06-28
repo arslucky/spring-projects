@@ -6,8 +6,10 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,6 +85,30 @@ public class AppPropertiesLookup implements StrLookup {
                     } else {
                         log( Level.INFO, String.format( "%s %s=%s (default)", i++, key, defaultProperties.getProperty( key)));
                         System.setProperty( key, defaultProperties.getProperty( key));
+                    }
+                }
+
+                // substitute value reference
+                Set<String> names = new HashSet<>( defaultProperties.stringPropertyNames());
+
+                for( String name : names) {
+                    String value = defaultProperties.getProperty( name);
+                    String oldValue = value;
+                    boolean found = false;
+                    i = 0;
+                    while( true && i++ < 20) {
+                        Matcher matcher = pattern.matcher( value);
+                        if( matcher.find()) {
+                            found = true;
+                            String val = System.getProperty( matcher.group( 1));
+                            value = value.replaceFirst( pattern.pattern(), val);
+                        } else {
+                            break;
+                        }
+                    }
+                    if( found) {
+                        log( Level.INFO, String.format( "value:%s replaced '%s' on '%s'", name, oldValue, value));
+                        System.setProperty( name, value);
                     }
                 }
 

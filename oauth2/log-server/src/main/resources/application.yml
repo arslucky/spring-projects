@@ -2,8 +2,7 @@ spring:
   application:
     name: log-server
   kafka:
-    bootstrap-servers:
-      - ${KAFKA_HOST}:${KAFKA_PORT}
+    bootstrap-servers: ${KAFKA_HOSTS}
   config:
     import: 
       - optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT} 

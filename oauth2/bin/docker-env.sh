@@ -26,10 +26,27 @@ export EUREKA=eureka-server
 export EUREKA_HOST=eureka-server
 export EUREKA_PORT=$(prop 'EUREKA_PORT')
 #
-export KAFKA=kafka
 export KAFKA_SETUP=kafka-setup
-export KAFKA_HOST=kafka
-export KAFKA_PORT=$(prop 'KAFKA_PORT')
+#
+export KAFKA1=kafka1
+export KAFKA_HOST1=$(prop 'KAFKA_HOST1')
+export KAFKA_PORT1=$(prop 'KAFKA_PORT1')
+#
+export KAFKA2=kafka2
+export KAFKA_HOST2=$(prop 'KAFKA_HOST2')
+export KAFKA_PORT2=$(prop 'KAFKA_PORT2')
+#
+export KAFKA3=kafka3
+export KAFKA_HOST3=$(prop 'KAFKA_HOST3')
+export KAFKA_PORT3=$(prop 'KAFKA_PORT3')
+#
+export KAFKA_HOSTS=$(prop 'KAFKA_HOSTS')
+# dev settings
+export KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+export KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+export KAFKA_CFG_MIN_INSYNC_REPLICAS=1
+export KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+export KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR=1
 #
 export ZOO=zoo
 export ZOO_HOST=zoo

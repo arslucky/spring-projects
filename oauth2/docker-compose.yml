@@ -16,23 +16,78 @@ services:
       ports:
       - ${ZOO_PORT}:${ZOO_PORT}
 
-   kafka:
+   kafka1:
       image: bitnami/kafka:3.3.2
-      container_name: ${KAFKA}
-      hostname: ${KAFKA_HOST}
+      container_name: ${KAFKA1}
+      hostname: ${KAFKA_HOST1}
+      networks: 
+      - ${NETWORK}
+      environment:      
+         ALLOW_PLAINTEXT_LISTENER: yes
+         KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 1
+         KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT1}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT1}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
+      ports:
+      - ${KAFKA_PORT1}:${KAFKA_PORT1}
+      depends_on:
+      - zoo
+
+   kafka2:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA2}
+      hostname: ${KAFKA_HOST2}
       networks: 
       - ${NETWORK}
       environment:
          ALLOW_PLAINTEXT_LISTENER: yes
          KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 2
          KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
-         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT}
-         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT2}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT2}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
       ports:
-      - ${KAFKA_PORT}:${KAFKA_PORT}
+      - ${KAFKA_PORT2}:${KAFKA_PORT2}
       depends_on:
       - zoo
 
+   kafka3:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA3}
+      hostname: ${KAFKA_HOST3}
+      networks: 
+      - ${NETWORK}
+      environment:
+         ALLOW_PLAINTEXT_LISTENER: yes
+         KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 3
+         KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT3}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT3}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
+      ports:
+      - ${KAFKA_PORT3}:${KAFKA_PORT3}
+      depends_on:
+      - zoo
+      
    kafka-setup:
       image: bitnami/kafka:3.3.2
       container_name: ${KAFKA_SETUP}
@@ -41,9 +96,9 @@ services:
       restart: "no"
       environment:
          LOG_TOPIC: ${LOG_TOPIC}
-      command: /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic ${LOG_TOPIC} --bootstrap-server ${KAFKA_HOST}:${KAFKA_PORT}
+      command: /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic ${LOG_TOPIC} --bootstrap-server ${KAFKA_HOST1}:${KAFKA_PORT1}
       depends_on:
-      - kafka
+      - kafka1
 
    mysql:
       image: mysql:8.0.32
@@ -118,8 +173,7 @@ services:
       environment:
          LOG_DIR: ${LOG_DIR}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
       ports:
       - ${CONFIG_SERVER_PORT}:${CONFIG_SERVER_PORT}
       working_dir: /app
@@ -143,8 +197,7 @@ services:
       environment:
          LOG_DIR: ${LOG_DIR}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
       working_dir: /app
       volumes:
          - type: bind
@@ -166,8 +219,7 @@ services:
       environment:
          LOG_DIR: ${LOG_DIR}
          EUREKA_PORT: ${EUREKA_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
       ports:
@@ -195,8 +247,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
       ports:
@@ -224,8 +275,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${GTW_HOST}
@@ -261,10 +311,8 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
-         EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${UI_1}
          AUTH_HOST: ${AUTH_HOST}
          AUTH_PORT: ${AUTH_PORT}
@@ -293,8 +341,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${UI_2}
@@ -325,8 +372,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${RES_1}
@@ -357,8 +403,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${RES_2}
@@ -389,8 +434,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${CUSTOMER_1}
@@ -427,8 +471,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${CUSTOMER_2}
@@ -465,8 +508,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${ORDER_1}
@@ -503,8 +545,7 @@ services:
          LOG_DIR: ${LOG_DIR}
          ZOO_HOST: ${ZOO_HOST}
          ZOO_PORT: ${ZOO_PORT}
-         KAFKA_HOST: ${KAFKA_HOST}
-         KAFKA_PORT: ${KAFKA_PORT}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
          EUREKA_HOST: ${EUREKA_HOST}
          EUREKA_PORT: ${EUREKA_PORT}
          EUREKA_INSTANCE_HOSTNAME: ${ORDER_2}

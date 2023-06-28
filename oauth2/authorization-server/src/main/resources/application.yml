@@ -5,8 +5,7 @@ spring:
   application:
     name: authorization-server
   kafka:
-    bootstrap-servers:
-      - ${KAFKA_HOST}:${KAFKA_PORT}    
+    bootstrap-servers: ${KAFKA_HOSTS}    
   cloud:
     config:
       name: oauth2

@@ -79,7 +79,9 @@ Applications can be run by multiple ways
         ```
     - add host mapping
         ```sh 
-        127.0.0.1 kafka
+        127.0.0.1 kafka1
+        127.0.0.1 kafka2
+        127.0.0.1 kafka3
         ```
         Linux - /etc/hosts<br>
         Windows - C:\Windows\System32\drivers\etc\hosts
@@ -98,7 +100,7 @@ Applications can be run by multiple ways
     Kafka topic, MySQL, MongoDB data initialization `is run at first Docker containers running.` Scripts are involved to the build process by default
     - Kafka
         ```sh
-        ./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
+        ./kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST1:$KAFKA_PORT1
         ```
     - MySQL
     *[dev-database.sql](customer-service/db/dev-database.sql)*
@@ -110,7 +112,7 @@ Note: Zookeeper, Kafka, MySQL, MongoDB have to be up.
 - Initialization
     - create [Kafka topic](https://kafka.apache.org/quickstart)
     ```sh
-    kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST:$KAFKA_PORT
+    kafka-topics.sh --create --topic log --bootstrap-server $KAFKA_HOST1:$KAFKA_PORT1
     ```
     - init MySQL
     ```sh
