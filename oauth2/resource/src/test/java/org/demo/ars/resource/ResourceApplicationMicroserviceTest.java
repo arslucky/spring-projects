@@ -8,6 +8,8 @@ import java.net.HttpCookie;
 import java.util.Base64;
 import java.util.UUID;
 
+import org.demo.ars.commons.AppPropertiesLookup;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,11 @@ public class ResourceApplicationMicroserviceTest {
     private Environment env;
 
     private static String path = "http://localhost";
+
+    @Before
+    public static void init() {
+        AppPropertiesLookup.init();
+    }
 
     // --------------------------------- getStatistic ---------------------------------------------------//
     @Test

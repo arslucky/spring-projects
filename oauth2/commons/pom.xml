@@ -2,16 +2,21 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.demo.ars</groupId>
+
+    <parent>
+        <groupId>org.demo.ars</groupId>
+        <artifactId>oauth2</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <artifactId>commons</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>commons</name>
     <description>Oauth2 common utils</description>
 
     <properties>
-        <java.version>1.8</java.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>${java.version.8}</maven.compiler.source>
+        <maven.compiler.target>${java.version.8}</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -111,7 +116,7 @@
                 <configuration>
                     <toolchains>
                         <jdk>
-                            <version>${java.version}</version>
+                            <version>${java.version.8}</version>
                         </jdk>
                     </toolchains>
                 </configuration>

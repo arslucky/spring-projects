@@ -11,6 +11,7 @@ import org.demo.ars.domain.account.AccountRepository;
 import org.demo.ars.domain.customer.Customer;
 import org.demo.ars.domain.customer.CustomerRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -20,13 +21,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
+//import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 //@formatter:off
-@EnabledIf( "#{systemProperties['group-tests'] != null "
-        + "and (systemProperties['group-tests'].toLowerCase().contains('integration-tests')"
-                + "or systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests'))}")
+//@EnabledIf( "#{systemProperties['group-tests'] != null "
+//        + "and (systemProperties['group-tests'].toLowerCase().contains('integration-tests')"
+//                + "or systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests'))}")
 //@formatter:on
+@EnabledIfSystemProperty( named = "group-tests", matches = "integration-tests|ms-integration-tests")
 @ActiveProfiles( "test")
 @SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CustomerServiceApplicationIntegrationTests {

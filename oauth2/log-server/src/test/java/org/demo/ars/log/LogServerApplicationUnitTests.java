@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.demo.ars.commons.AppPropertiesLookup;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -14,7 +16,10 @@ import org.junit.jupiter.api.Test;
  */
 class LogServerApplicationUnitTests {
 
-
+    @BeforeAll
+    public static void init() {
+        AppPropertiesLookup.init();
+    }
     @Test
     public void settings() throws UnknownHostException {
 

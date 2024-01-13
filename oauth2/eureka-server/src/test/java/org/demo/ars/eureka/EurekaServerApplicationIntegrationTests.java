@@ -7,11 +7,12 @@ import java.net.UnknownHostException;
 
 import org.demo.ars.commons.AppPropertiesLookup;
 import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.condition.EnabledIf;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 /**
  * Integration tests without connection to external services
@@ -21,9 +22,7 @@ import org.springframework.test.context.junit.jupiter.EnabledIf;
  */
 // @EnabledIf( "#{${integration-tests:false} || ${ms-integration-tests:false}}")
 // @formatter:off
-@EnabledIf( "#{systemProperties['group-tests'] != null "
-                + "and (systemProperties['group-tests'].toLowerCase().contains('integration-tests')"
-                        + "or systemProperties['group-tests'].toLowerCase().contains('ms-integration-tests'))}")
+@EnabledIfSystemProperty( named = "group-tests", matches = "integration-tests|ms-integration-tests")
 // @formatter:on
 @SpringBootTest( webEnvironment = WebEnvironment.RANDOM_PORT)
 class EurekaServerApplicationIntegrationTests {

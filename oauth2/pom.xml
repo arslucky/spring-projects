@@ -2,10 +2,21 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.demo.ars</groupId>
   <artifactId>oauth2</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <description>Project to study OAuth2</description>
-  
+
+  <properties>
+    <revision>0.0.1-SNAPSHOT</revision>
+    <java.version.8>1.8</java.version.8>
+    <java.version.17>17</java.version.17>
+    <spring.boot.1>1.5.22.RELEASE</spring.boot.1>
+    <spring.boot.3>3.0.2</spring.boot.3>
+    <spring.boot.1.junit>4.12</spring.boot.1.junit>
+    <spring-cloud.1.version>Edgware.SR6</spring-cloud.1.version>
+    <spring-cloud.3.version>2022.0.1</spring-cloud.3.version>
+  </properties>
+
   <modules>
     <module>commons</module>
   	<module>resource</module>
@@ -18,4 +29,23 @@
     <module>customer-service</module>
     <module>order-service</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>

@@ -6,7 +6,7 @@
             <version>1.8</version>
         </provides>
         <configuration>
-            <jdkHome>${env.JAVA_HOME_8}</jdkHome>
+            <jdkHome>/usr/lib/jvm/java-8-openjdk-amd64</jdkHome>
         </configuration>
     </toolchain>
     <toolchain>
@@ -15,7 +15,7 @@
             <version>17</version>
         </provides>
         <configuration>
-            <jdkHome>${env.JAVA_HOME_17}</jdkHome>
+            <jdkHome>/usr/lib/jvm/java-17-openjdk-amd64</jdkHome>
         </configuration>
     </toolchain>
 </toolchains>
