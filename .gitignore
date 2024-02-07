@@ -33,3 +33,4 @@ package-lock.js
 **/static/built/
 *.bkp
 package-lock.json
+.flattened-pom.xml

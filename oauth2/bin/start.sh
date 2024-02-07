@@ -1,7 +1,7 @@
-export JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
-export JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
-export JAVA_HOME=$JAVA_HOME_17
-export LOG_DIR=/mnt/c/logs
+JAVA_HOME_17=/usr/lib/jvm/java-17-openjdk-amd64
+JAVA_HOME_8=/usr/lib/jvm/java-8-openjdk-amd64
+JAVA_HOME=$JAVA_HOME_17
+LOG_DIR=/var/logs
 
 $JAVA_HOME_17/bin/java -jar ../config-server/target/config-server-0.0.1-SNAPSHOT.jar -DLOG_DIR=$LOG_DIR &
 sleep 5

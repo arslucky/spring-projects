@@ -53,21 +53,23 @@ applications and testing in an IDE without extra variable settings.
 Properties can be overridden in a command line.
  
 ## Build
-### Linux
-Run [bin/build.sh](bin/build.sh)
-Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
-```sh
-./bin/build.sh
-```
-### Windows
-Run [bin\build.bat](bin/build.bat)
-Set correct `JAVA_HOME_8, JAVA_HOME_17` paths into the script before running
-```sh
-bin\build.bat
-```
 ## Maven
 Applied Maven [toolchains plugin](https://maven.apache.org/guides/mini/guide-using-toolchains.html) to support multiple java versions at building and running modules.
-Each module contains [maven.config](commons/.mvn/maven.config) which refers to the parent [toolchains.xml](toolchains.xml) configuration file with multiple java versions 
+Each module contains [maven.config](commons/.mvn/maven.config) which refers to the parent [toolchains.xml](toolchains.xml) configuration file with multiple java versions, update on your local Java paths.
+To build project use maven commands.
+
+### Linux
+Run [./build.sh](bin/build.sh)
+Set correct `LOG_DIR, LOG_FILE` settings before running script
+```sh
+./build.sh
+```
+### Windows
+Run [build.bat](bin/build.bat)
+Set correct `LOG_DIR, LOG_FILE` settings before running script
+```sh
+build.bat
+```
 
 ## Run project
 Applications can be run by multiple ways
@@ -89,6 +91,10 @@ Applications can be run by multiple ways
     [bin/docker-build.sh](bin/docker-build.sh) - create images and run containers in detached mode through Docker CLI. Initialize Kafka topic, MySQL, MongoDB data at first running
     ```sh
     ./bin/docker-build.sh
+    ```
+    command to start containers after creating them
+    ```sh
+    docker start zoo kafka1 kafka2 kafka3 mysql mongo config-server log-server eureka-server auth-server gateway-server ui1 ui2 resource1 resource2 customer-service1 customer-service2 order-service1 order-service2
     ```
 - Compose
     [bin/docker-compose.yml](bin/docker-compose.yml) - Docker compose file, all services are in one place. Disadvantage: contains extra services to initialize Kafka, MySQL, MongoDB by custom scripts<br>         
@@ -137,9 +143,10 @@ default [properties](commons/src/main/resources/default.properties) and build as
 
 ## Stop project
 - Docker UI, stop container by Docker UI
-- Docker CLI, stop container by [Docker CLI](https://docs.docker.com/engine/reference/commandline/stop/), for instance<br>
+- Docker CLI, stop container by [Docker CLI](https://docs.docker.com/engine/reference/commandline/stop/)<br>
+  command to start containers after creating them
     ```sh
-    docker stop ui
+    docker stop zoo kafka1 kafka2 kafka3 mysql mongo config-server log-server eureka-server auth-server gateway-server ui1 ui2 resource1 resource2 customer-service1 customer-service2 order-service1 order-service2
     ```
 - Docker Compose, stop container(s) by [Docker Compose CLI](https://docs.docker.com/engine/reference/commandline/compose_stop/)<br>
     ```sh
@@ -148,11 +155,11 @@ default [properties](commons/src/main/resources/default.properties) and build as
 - Standalone
     Linux - [bin/stop.sh](bin/stop.sh), kill process in the reverse starting order, with default 7 signal<br>
     ```sh
-    ./bin/stop.sh
+    ./stop.sh
     ```
     Windows - [bin\stop.bat](bin/stop.bat) kill process in the reverse starting order
     ```sh
-    bin\stop.bat
+    stop.bat
     ```
 
 ## Ports
