@@ -184,7 +184,7 @@ services:
          - type: bind
            source: ./config-server/target/
            target: /app
-      command: java -jar config-server-0.0.1-SNAPSHOT.jar
+      command: java -jar config-server-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - kafka-setup
 
@@ -206,7 +206,7 @@ services:
          - type: bind
            source: ./log-server/target/
            target: /app
-      command: java -jar log-server-0.0.1-SNAPSHOT.jar
+      command: java -jar log-server-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - kafka-setup
       
@@ -232,7 +232,7 @@ services:
          - type: bind
            source: ./eureka-server/target/
            target: /app
-      command: java -jar eureka-server-0.0.1-SNAPSHOT.jar
+      command: java -jar eureka-server-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - kafka-setup
       - config-server
@@ -260,7 +260,7 @@ services:
          - type: bind
            source: ./authorization-server/target/
            target: /app
-      command: java -jar authorization-server-0.0.1-SNAPSHOT.jar
+      command: java -jar authorization-server-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - kafka-setup
       - config-server
@@ -295,7 +295,7 @@ services:
          - type: bind
            source: ./gateway-zuul/target/
            target: /app
-      command: java -jar gateway-0.0.1-SNAPSHOT.jar
+      command: java -jar gateway-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - kafka-setup
       - config-server
@@ -326,7 +326,7 @@ services:
          - type: bind
            source: ./ui/target/
            target: /app
-      command: java -jar ui-0.0.1-SNAPSHOT.jar
+      command: java -jar ui-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - gateway-server
       - eureka-server
@@ -357,7 +357,7 @@ services:
          - type: bind
            source: ./ui/target/
            target: /app
-      command: java -jar ui-0.0.1-SNAPSHOT.jar
+      command: java -jar ui-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - gateway-server
       - eureka-server
@@ -388,7 +388,7 @@ services:
          - type: bind
            source: ./resource/target/
            target: /app
-      command: java -jar resource-0.0.1-SNAPSHOT.jar
+      command: java -jar resource-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - gateway-server
       - eureka-server
@@ -419,7 +419,7 @@ services:
          - type: bind
            source: ./resource/target/
            target: /app
-      command: java -jar resource-0.0.1-SNAPSHOT.jar
+      command: java -jar resource-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - gateway-server
       - eureka-server
@@ -455,7 +455,7 @@ services:
          - type: bind
            source: ./customer-service/target/
            target: /app
-      command: java -jar customer-service-0.0.1-SNAPSHOT.jar
+      command: java -jar customer-service-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - mysql-setup
       - gateway-server
@@ -492,7 +492,7 @@ services:
          - type: bind
            source: ./customer-service/target/
            target: /app
-      command: java -jar customer-service-0.0.1-SNAPSHOT.jar
+      command: java -jar customer-service-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - mysql-setup
       - gateway-server
@@ -529,7 +529,7 @@ services:
          - type: bind
            source: ./order-service/target/
            target: /app
-      command: java -jar order-service-0.0.1-SNAPSHOT.jar
+      command: java -jar order-service-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - mongo-setup
       - gateway-server
@@ -566,7 +566,7 @@ services:
          - type: bind
            source: ./order-service/target/
            target: /app
-      command: java -jar order-service-0.0.1-SNAPSHOT.jar
+      command: java -jar order-service-0.0.1-SNAPSHOT-exec.jar
       depends_on:
       - mongo-setup
       - gateway-server

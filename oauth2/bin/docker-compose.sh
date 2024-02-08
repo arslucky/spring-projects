@@ -1,5 +1,6 @@
+set -a
 . ./docker-env.sh
-
+set +a
 docker compose --file ../docker-compose.yml up -d
 
 #docker compose --file ../docker-compose.yml stop zoo kafka1 kafka2 kafka3
