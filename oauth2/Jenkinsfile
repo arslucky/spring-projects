@@ -1,0 +1,12 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                git branch: 'main', url: 'https://github.com/arslucky/spring-projects.git'
+                sh "cd oauth2 && mvn clean package"
+            }
+        }
+    }
+}
