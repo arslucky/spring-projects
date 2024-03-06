@@ -250,6 +250,8 @@ services:
          KAFKA_HOSTS: ${KAFKA_HOSTS}
          CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
       ports:
       - ${AUTH_PORT}:${AUTH_PORT}
       working_dir: /app
@@ -281,8 +283,6 @@ services:
          EUREKA_INSTANCE_HOSTNAME: ${GTW_HOST}
          AUTH_HOST: ${AUTH_HOST}
          AUTH_PORT: ${AUTH_PORT}
-         #TODO:
-         AUTH_AUTHORIZATION: localhost
          CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
          CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
       ports:

@@ -94,7 +94,7 @@ security:
       id: oauth2-resource
     client: 
       access-token-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/oauth/token
-      user-authorization-uri: http://${AUTH_AUTHORIZATION}:${AUTH_PORT}/uaa/oauth/authorize
+      user-authorization-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/oauth/authorize
       client-id: ui_client
       client-secret: password
       scope:
