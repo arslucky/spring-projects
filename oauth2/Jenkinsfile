@@ -2,10 +2,55 @@ pipeline {
     agent any
 
     stages {
+
         stage('Build') {
             steps {
                 git branch: 'main', url: 'https://github.com/arslucky/spring-projects.git'
-                sh "cd oauth2 && mvn clean package"
+                sh "cd oauth2 && mvn clean package -DGTW_HOST=192.168.1.78 -DGTW_PORT=8079"
+            }
+        }
+
+        stage('SSH transfers') {
+            steps([$class: 'BapSshPromotionPublisherPlugin']) {
+                sshPublisher(
+                    continueOnError: false, failOnError: true,
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: "192.168.1.78",
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(execCommand: "/bin/rm -rf ~/deploy/oauth2"),
+                                sshTransfer(sourceFiles: "oauth2/.env"),
+                                sshTransfer(sourceFiles: "oauth2/docker-compose-env.yml"),
+                                sshTransfer(sourceFiles: "oauth2/docker-compose-app.yml"),
+                                sshTransfer(sourceFiles: "oauth2/customer-service/db/*"),
+                                sshTransfer(sourceFiles: "oauth2/order-service/db/*"),
+                                sshTransfer(sourceFiles: "oauth2/**/target/*.jar"),
+                                sshTransfer(execCommand: "chmod a+x ~/deploy/oauth2/customer-service/db/initdb.sh"),
+                                sshTransfer(execCommand: "chmod a+x ~/deploy/oauth2/order-service/db/initdb.sh")
+                            ]
+                        )
+                    ]
+                    )
+            }
+        }
+
+        stage('Deploy docker compose') {
+            steps([$class: 'BapSshPromotionPublisherPlugin']) {
+                sshPublisher(
+                    continueOnError: false, failOnError: true,
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: "192.168.1.78",
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(execCommand: "cd ~/deploy/oauth2 && set -a && HOST_DEPLOY=192.168.1.78 && set +a && docker compose --file docker-compose-env.yml up -d"),
+                                sshTransfer(execCommand: "cd ~/deploy/oauth2 && set -a && HOST_DEPLOY=192.168.1.78 && docker compose --file docker-compose-app.yml stop"),
+                                sshTransfer(execCommand: "cd ~/deploy/oauth2 && set -a && HOST_DEPLOY=192.168.1.78 && GTW_PORT=8079 && set +a && docker compose --file docker-compose-app.yml up -d")
+                            ]
+                        )
+                    ]
+                    )
             }
         }
     }
