@@ -1,17 +1,17 @@
 server:
-  port: ${EUREKA_PORT}
+  port: ${EUREKA_PORT:8762}
 spring:
   application:
     name: eureka-server
   profiles:
     active: dev
   kafka:
-    bootstrap-servers: ${KAFKA_HOSTS}
+    bootstrap-servers: ${KAFKA_HOSTS:localhost:9091,localhost:9093,localhost:9094}
     consumer:
       client-id: ${spring.application.name} 
   config:
     import: 
-      - optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT} 
+      - optional:configserver:http://${CONFIG_SERVER_HOST:localhost}:${CONFIG_SERVER_PORT:8889}
   cloud:
     config:
       name: oauth2
@@ -36,7 +36,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
     service-url:
-      defaultZone: http://${EUREKA_HOST}:${EUREKA_PORT}/eureka/
+      defaultZone: http://${EUREKA_HOST:localhost}:${EUREKA_PORT:8762}/eureka/
 management:
   endpoints:
     web:
@@ -57,5 +57,5 @@ eureka:
   server:
     enable-self-preservation: false
     #expected-client-renewal-interval-seconds: ${EUREKA_LIVE_INTERVAL_SECONDS}
-    eviction-interval-timer-in-ms: ${EUREKA_EVICTION_JOB_RUNNING_MS}
-    response-cache-update-interval-ms: ${CACHE_UPDATE_INTERVAL_MS}
+    eviction-interval-timer-in-ms: ${EUREKA_EVICTION_JOB_RUNNING_MS:5000}
+    response-cache-update-interval-ms: ${CACHE_UPDATE_INTERVAL_MS:2000}

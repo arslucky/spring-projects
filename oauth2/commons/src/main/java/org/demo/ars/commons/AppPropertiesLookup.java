@@ -5,17 +5,13 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -41,7 +37,7 @@ public class AppPropertiesLookup implements StrLookup {
 
     private static ReentrantLock rel = new ReentrantLock();
 
-    private static final Pattern pattern = Pattern.compile( "\\$\\{([\\w\\.]+)\\}");
+    private static final Pattern pattern = Pattern.compile( "\\$\\{([\\w\\.]+?):{0,1}([\\w\\.]*?)\\}");
 
     static {
         init();
@@ -52,11 +48,12 @@ public class AppPropertiesLookup implements StrLookup {
     public static void init() {
         try {
             if( rel.tryLock( 1, TimeUnit.SECONDS) && !initialized) {
+
                 Properties prop = new Properties();
 
                 prop.putAll( PropertiesUtils.loadPropertiesFromYaml( "application"));
                 prop.putAll( PropertiesUtils.loadProperties( "application"));
-
+/*
                 Properties defaultProperties = PropertiesUtils.loadProperties( "default");
                 prop.putAll( defaultProperties);
 
@@ -113,12 +110,13 @@ public class AppPropertiesLookup implements StrLookup {
                 }
 
                 prop.putAll( System.getProperties());
+*/
                 prop.putAll( System.getenv());
 
                 map.put( "name", String.valueOf( prop.get( "spring.application.name")));
                 map.put( "host", InetAddress.getLocalHost().getHostName());
 
-                String port = getValue( String.valueOf( prop.get( "server.port")), prop);
+                String port = getValue(  "server.port", prop);
                 if( port == null) {
                     port = getValue( String.valueOf( prop.get( "port")), prop);
                 }
@@ -202,17 +200,18 @@ public class AppPropertiesLookup implements StrLookup {
         }
     }
 
-    private static String getValue( String value, Properties prop) {
+    static String getValue( String param, Properties prop) {
 
-        if( isBlank( value)) {
-            return value;
-        }
-        Matcher matcher = pattern.matcher( value);
+        String val = Optional.ofNullable(String.valueOf(prop.get(param))).orElse(StringUtils.EMPTY);
+
+        Matcher matcher = pattern.matcher( val);
 
         if( matcher.matches()) {
-            return prop.getProperty( matcher.group( 1));
+            val = prop.getProperty(matcher.group(1));
+            if( val == null && matcher.groupCount() > 1) {
+                val = prop.getProperty(matcher.group(2));
+            };
         }
-        return value;
+        return val;
     }
-
 }

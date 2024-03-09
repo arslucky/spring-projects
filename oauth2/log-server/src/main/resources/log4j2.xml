@@ -5,20 +5,20 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%msg" />
         </Console>
-        <RollingFile name="File" fileName="${sys:LOG_DIR}/${sys:KAFKA_LOG_FILE}" filePattern="${sys:LOG_DIR}/archive/${sys:KAFKA_LOG_FILE}-%d{yyyyMMdd}">
+        <RollingFile name="File" fileName="${env:LOG_DIR}/${env:KAFKA_LOG_FILE:-oauth2_server.log}" filePattern="${env:LOG_DIR}/archive/${env:KAFKA_LOG_FILE:-oauth2_server.log}-%d{yyyyMMdd}">
             <PatternLayout pattern="%msg" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${sys:LOG_DIR}/archive">
+                <Delete basePath="${env:LOG_DIR}/archive">
                     <IfLastModified age="P5D" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="${app:LOG_LEVEL}">
+        <Root level="${env:LOG_LEVEL:-INFO}">
             <AppenderRef ref="Console" />
             <AppenderRef ref="File" />
         </Root>

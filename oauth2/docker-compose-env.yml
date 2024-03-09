@@ -1,0 +1,166 @@
+networks:
+   oauth2:
+      driver: bridge
+      name: ${NETWORK}
+services:
+   zoo:
+      image: bitnami/zookeeper:3.7.1
+      container_name: ${ZOO}
+      hostname: ${ZOO}
+      networks: 
+      - ${NETWORK}
+      environment:
+         ALLOW_ANONYMOUS_LOGIN: yes
+         ZOO_PORT_NUMBER: ${ZOO_PORT}
+      ports:
+      - ${ZOO_PORT}:${ZOO_PORT}
+
+   kafka1:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA1}
+      hostname: ${KAFKA1}
+      networks: 
+      - ${NETWORK}
+      environment:      
+         ALLOW_PLAINTEXT_LISTENER: yes
+         KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 1
+         KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT1}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT1}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
+      ports:
+      - ${KAFKA_PORT1}:${KAFKA_PORT1}
+      depends_on:
+      - zoo
+
+   kafka2:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA2}
+      hostname: ${KAFKA2}
+      networks:
+      - ${NETWORK}
+      environment:
+         ALLOW_PLAINTEXT_LISTENER: yes
+         KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 2
+         KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT2}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT2}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
+      ports:
+      - ${KAFKA_PORT2}:${KAFKA_PORT2}
+      depends_on:
+      - zoo
+
+   kafka3:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA3}
+      hostname: ${KAFKA3}
+      networks:
+      - ${NETWORK}
+      environment:
+         ALLOW_PLAINTEXT_LISTENER: yes
+         KAFKA_ENABLE_KRAFT: no
+         KAFKA_CFG_BROKER_ID: 3
+         KAFKA_CFG_ZOOKEEPER_CONNECT: ${ZOO_HOST}:${ZOO_PORT}
+         KAFKA_CFG_LISTENERS: PLAINTEXT://:${KAFKA_PORT3}
+         KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_PORT3}
+         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR}
+         KAFKA_CFG_MIN_INSYNC_REPLICAS: ${KAFKA_CFG_MIN_INSYNC_REPLICAS}
+         KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE}
+         KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+         #Overridden min.insync.replicas config for the transaction topic.
+         KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_CFG_TRANSACTION_STATE_LOG_MIN_ISR}
+      ports:
+      - ${KAFKA_PORT3}:${KAFKA_PORT3}
+      depends_on:
+      - zoo
+      
+   kafka-setup:
+      image: bitnami/kafka:3.3.2
+      container_name: ${KAFKA_SETUP}
+      networks: 
+      - ${NETWORK}
+      restart: "no"
+      environment:
+         LOG_TOPIC: ${LOG_TOPIC}
+      command: /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic ${LOG_TOPIC} --bootstrap-server ${KAFKA_HOST1}:${KAFKA_PORT1}
+      depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+   mysql:
+      image: mysql:8.0.32
+      container_name: ${MYSQL}
+      hostname: ${MYSQL}
+      networks:
+      - ${NETWORK}
+      ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+      environment:
+         MYSQL_TCP_PORT: ${MYSQL_PORT}
+         MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+   mysql-setup:
+      image: mysql:8.0.32
+      container_name: ${MYSQL_SETUP}
+      networks:
+      - ${NETWORK}
+      restart: "no"
+      environment:
+         MYSQL_HOST: ${MYSQL_HOST}
+         MYSQL_PORT: ${MYSQL_PORT}
+         MYSQL_ROOT: ${MYSQL_ROOT}
+         MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ./customer-service/db
+           target: /app
+      command: ./initdb.sh
+      depends_on:
+      - mysql
+
+   mongo:
+      image: bitnami/mongodb:6.0.5
+      container_name: ${MONGO}
+      hostname: ${MONGO}
+      networks:
+      - ${NETWORK}
+      ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+      environment:
+         MONGODB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+         MONGODB_PORT_NUMBER: ${MONGO_PORT}
+
+   mongo-setup:
+      image: bitnami/mongodb:6.0.5
+      container_name: ${MONGO_SETUP}
+      networks:
+      - ${NETWORK}
+      restart: "no"
+      environment:
+         MONGO_HOST: ${MONGO_HOST}
+         MONGO_PORT: ${MONGO_PORT}
+         MONGO_ROOT: ${MONGO_ROOT}
+         MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ./order-service/db
+           target: /app
+      command:  ./initdb.sh
+      depends_on:
+      - mongo

@@ -1,0 +1,324 @@
+networks:
+   oauth2:
+      driver: bridge
+      name: ${NETWORK}
+services:
+   config-server:
+      image: eclipse-temurin:17-jdk-jammy
+      container_name: ${CONFIG_SERVER}
+      hostname: ${CONFIG_SERVER}
+      networks:
+      - ${NETWORK}
+      environment:
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+      ports:
+      - ${CONFIG_SERVER_PORT}:${CONFIG_SERVER_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./config-server/target/
+           target: /app
+      command: java -jar config-server-0.1.1-SNAPSHOT-exec.jar
+
+   log-server:
+      image: eclipse-temurin:17-jdk-jammy
+      container_name: ${LOG_SERVER}
+      hostname: ${LOG_SERVER}
+      networks:
+      - ${NETWORK}
+      environment:
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         KAFKA_LOG_FILE: ${KAFKA_LOG_FILE}
+         LOG_TOPIC: ${LOG_TOPIC}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./log-server/target/
+           target: /app
+      command: java -jar log-server-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - config-server
+
+   eureka-server:
+      image: eclipse-temurin:17-jdk-jammy
+      container_name: ${EUREKA}
+      hostname: ${EUREKA}
+      networks:
+      - ${NETWORK}
+      environment:
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_PORT: ${EUREKA_PORT}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+      ports:
+      - ${EUREKA_PORT}:${EUREKA_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./eureka-server/target/
+           target: /app
+      command: java -jar eureka-server-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - config-server
+
+   auth-server:
+      image: eclipse-temurin:8-jdk-jammy
+      container_name: ${AUTH}
+      hostname: ${AUTH}
+      networks:
+      - ${NETWORK}
+      environment:
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+         spring.cloud.config.uri: ${SPRING_CLOUD_CONFIG_URI}
+         GTW_HOST: ${GTW_HOST}
+         GTW_PORT: ${GTW_PORT}
+      ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./authorization-server/target/
+           target: /app
+      command: java -jar authorization-server-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - config-server
+
+   gateway-server:
+      image: eclipse-temurin:8-jdk-jammy
+      container_name: ${GTW}
+      hostname: ${GTW}
+      networks:
+      - ${NETWORK}
+      environment:
+         GTW_PORT: ${GTW_PORT}
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_PORT: ${EUREKA_PORT}
+         EUREKA_INSTANCE_HOSTNAME: ${GTW_HOST}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+         spring.cloud.config.uri: ${SPRING_CLOUD_CONFIG_URI}
+      ports:
+      - ${GTW_PORT}:${GTW_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./gateway-zuul/target/
+           target: /app
+      command: java -jar gateway-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - config-server
+      - eureka-server
+
+   ui1:
+      image: eclipse-temurin:8-jdk-jammy
+      container_name: ${UI_1}
+      hostname: ${UI_1}
+      networks:
+      - ${NETWORK}
+      environment:
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_INSTANCE_HOSTNAME: ${UI_1}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+         spring.cloud.config.uri: ${SPRING_CLOUD_CONFIG_URI}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./ui/target/
+           target: /app
+      command: java -jar ui-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - gateway-server
+      - eureka-server
+
+   resource1:
+      image: eclipse-temurin:8-jdk-jammy
+      container_name: ${RES_1}
+      hostname: ${RES_1}
+      networks:
+      - ${NETWORK}
+      environment:
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_PORT: ${EUREKA_PORT}
+         EUREKA_INSTANCE_HOSTNAME: ${RES_1}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+         spring.cloud.config.uri: ${SPRING_CLOUD_CONFIG_URI}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./resource/target/
+           target: /app
+      command: java -jar resource-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - gateway-server
+      - eureka-server
+
+   customer-service1:
+      image: eclipse-temurin:17-jdk-jammy
+      container_name: ${CUSTOMER_1}
+      hostname: ${CUSTOMER_1}
+      networks:
+      - ${NETWORK}
+      environment:
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_PORT: ${EUREKA_PORT}
+         EUREKA_INSTANCE_HOSTNAME: ${CUSTOMER_1}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         MYSQL_HOST: ${MYSQL_HOST}
+         MYSQL_PORT: ${MYSQL_PORT}
+         MYSQL_DB: ${MYSQL_DB}
+         MYSQL_USER: ${MYSQL_USER}
+         MYSQL_USER_PASSWORD: ${MYSQL_USER_PASSWORD}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./customer-service/target/
+           target: /app
+      command: java -jar customer-service-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - gateway-server
+      - eureka-server
+
+   order-service1:
+      image: eclipse-temurin:17-jdk-jammy
+      container_name: ${ORDER_1}
+      hostname: ${ORDER_1}
+      networks:
+      - ${NETWORK}
+      environment:
+         EUREKA_HOST: ${EUREKA_HOST}
+         EUREKA_PORT: ${EUREKA_PORT}
+         EUREKA_INSTANCE_HOSTNAME: ${ORDER_1}
+         AUTH_HOST: ${AUTH_HOST}
+         AUTH_PORT: ${AUTH_PORT}
+         MONGO_HOST: ${MONGO_HOST}
+         MONGO_PORT: ${MONGO_PORT}
+         MONGO_DB: ${MONGO_DB}
+         MONGO_USER: ${MONGO_USER}
+         MONGO_USER_PASSWORD: ${MONGO_USER_PASSWORD}
+         CONFIG_SERVER_HOST: ${CONFIG_SERVER_HOST}
+         CONFIG_SERVER_PORT: ${CONFIG_SERVER_PORT}
+         LOG_DIR: ${LOG_CONTAINER_DIR}
+         LOG_FILE: ${LOG_FILE}
+         LOG_ERROR_FILE: ${LOG_ERROR_FILE}
+         LOG_LEVEL: ${LOG_LEVEL}
+         KAFKA_LOG_LEVEL: ${KAFKA_LOG_LEVEL}
+         KAFKA_HOSTS: ${KAFKA_HOSTS}
+         LOG_TOPIC: ${LOG_TOPIC}
+         ZOO_HOST: ${ZOO_HOST}
+         ZOO_PORT: ${ZOO_PORT}
+      working_dir: /app
+      volumes:
+         - type: bind
+           source: ${LOG_DIR}
+           target: ${LOG_CONTAINER_DIR}
+         - type: bind
+           source: ./order-service/target/
+           target: /app
+      command: java -jar order-service-0.1.1-SNAPSHOT-exec.jar
+      depends_on:
+      - gateway-server
+      - eureka-server

@@ -7,8 +7,8 @@ import { client } from './client';
 import { follow, setGatewayPath } from './follow';
 
 const settings = {
-    appHost: 'localhost',
-    appPort: '8080',
+    appHost: process.env.GTW_HOST,
+    appPort: process.env.GTW_PORT,
     rootPath: '/customer',
     dataRestBasePath: '/api'
 };

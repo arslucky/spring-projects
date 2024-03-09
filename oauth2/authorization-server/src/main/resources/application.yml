@@ -1,11 +1,11 @@
 server:
-  port: ${AUTH_PORT}
+  port: ${AUTH_PORT:9000}
   context-path: /uaa
 spring:
   application:
     name: authorization-server
   kafka:
-    bootstrap-servers: ${KAFKA_HOSTS}    
+    bootstrap-servers: ${KAFKA_HOSTS:localhost:9091,localhost:9093,localhost:9094}
   cloud:
     config:
       name: oauth2
@@ -15,8 +15,8 @@ spring:
     stream:
       kafka:
         binder:
-          zkNodes: ${ZOO_HOST}
-          defaultZkPort: ${ZOO_PORT}
+          zkNodes: ${ZOO_HOST:localhost}
+          defaultZkPort: ${ZOO_PORT:2182}
       bindings:
         springCloudBusOutput:
           content-type: application/json
@@ -35,8 +35,11 @@ security:
     password: none
   oauth2:
     resource:
-      user-info-uri: http://${AUTH_HOST}:${AUTH_PORT}/uaa/user
+      user-info-uri: http://${AUTH_HOST:localhost}:${AUTH_PORT:9000}/uaa/user
 management:
   health:
     defaults:
-      enabled: true        
+      enabled: true
+redirect:
+  host: ${GTW_HOST:localhost}
+  port: ${GTW_PORT:8080}

@@ -30,6 +30,7 @@ function follow(api, settings, relArray) {
 }
 
 function setGatewayPath(path, settings) {
+    console.log('settings.appHost=' + settings.appHost + ', settings.appPort=' + settings.appPort);
     path = path
         //.replace(/:[\d]{1,6}/, ':' + settings.appPort + settings.rootPath)
         .replace(/\/\/[\w-]+:[\d]{1,6}/, '//' + settings.appHost + ':' + settings.appPort + settings.rootPath)

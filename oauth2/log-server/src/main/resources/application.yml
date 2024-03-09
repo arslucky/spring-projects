@@ -2,10 +2,10 @@ spring:
   application:
     name: log-server
   kafka:
-    bootstrap-servers: ${KAFKA_HOSTS}
+    bootstrap-servers: ${KAFKA_HOSTS:localhost:9091,localhost:9093,localhost:9094}
   config:
     import: 
-      - optional:configserver:http://${CONFIG_SERVER_HOST}:${CONFIG_SERVER_PORT} 
+      - optional:configserver:http://${CONFIG_SERVER_HOST:localhost}:${CONFIG_SERVER_PORT:8889}
   cloud:
     config:
       name: oauth2  

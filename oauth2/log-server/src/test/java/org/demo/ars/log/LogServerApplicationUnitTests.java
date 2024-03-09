@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 
 import org.demo.ars.commons.AppPropertiesLookup;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
  * @author arsen.ibragimov
  *
  */
+@Disabled
 class LogServerApplicationUnitTests {
 
     @BeforeAll

@@ -5,39 +5,39 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss} %highlight{[%level]} %yellow{%C{3.}} - %msg%n" />
         </Console>
-        <RollingFile name="RollingFile" fileName="${sys:LOG_DIR}/${sys:LOG_FILE}" filePattern="${sys:LOG_DIR}/archive/${sys:LOG_FILE}-%d{yyyyMMdd}">
+        <RollingFile name="RollingFile" fileName="${env:LOG_DIR}/${env:LOG_FILE:-oauth2.log}" filePattern="${env:LOG_DIR}/archive/${env:LOG_FILE:-oauth2.log}-%d{yyyyMMdd}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${sys:LOG_DIR}/archive">
+                <Delete basePath="${env:LOG_DIR}/archive">
                     <IfLastModified age="P5D" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="RollingFileError" fileName="${sys:LOG_DIR}/${sys:LOG_ERROR_FILE}" filePattern="${sys:LOG_DIR}/archive/${sys:LOG_ERROR_FILE}-%d{yyyyMMdd}">
+        <RollingFile name="RollingFileError" fileName="${env:LOG_DIR}/${env:LOG_ERROR_FILE:-oauth2_error.log}" filePattern="${env:LOG_DIR}/archive/${env:LOG_ERROR_FILE:-oauth2_error.log}-%d{yyyyMMdd}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
             <Policies>
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy>
-                <Delete basePath="${sys:LOG_DIR}/archive">
+                <Delete basePath="${env:LOG_DIR}/archive">
                     <IfLastModified age="P5D" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <Kafka name="Kafka" topic="${sys:LOG_TOPIC}">
+        <Kafka name="Kafka" topic="${env:LOG_TOPIC}">
             <PatternLayout pattern="%d{ISO8601} [%level] ${app:host}:${app:port}:${app:name} [%X{trace-id}] %C{3.} - %msg%n" />
-            <Property name="bootstrap.servers">${sys:KAFKA_HOSTS}</Property>
+            <Property name="bootstrap.servers">${env:KAFKA_HOSTS:-localhost:9092}</Property>
         </Kafka>
     </Appenders>
     <Loggers>
-        <Root level="${app:LOG_LEVEL}">
+        <Root level="${env:LOG_LEVEL:-INFO}">
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
             <AppenderRef ref="RollingFileError" level="WARN" />
-            <AppenderRef ref="Kafka" level="${sys:KAFKA_LOG_LEVEL}"/>
+            <AppenderRef ref="Kafka" level="${env:KAFKA_LOG_LEVEL:-OFF}"/>
         </Root>
     </Loggers>
 </Configuration>

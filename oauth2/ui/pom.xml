@@ -175,6 +175,12 @@
                         <goals>
                             <goal>webpack</goal>
                         </goals>
+                        <configuration>
+                            <environmentVariables>
+                                <GTW_HOST>${GTW_HOST}</GTW_HOST>
+                                <GTW_PORT>${GTW_PORT}</GTW_PORT>
+                            </environmentVariables>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
